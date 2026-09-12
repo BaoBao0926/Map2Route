@@ -1,0 +1,123 @@
+from __future__ import annotations
+
+import json
+import tempfile
+import unittest
+from types import SimpleNamespace
+from pathlib import Path
+from unittest.mock import patch
+
+from scripts.methods.groundplan.run import (
+    AUTOMATIC_ABLATION_CASES,
+    build_all,
+    load_replay_grounding_code,
+    replay_grounding_code_path,
+)
+from scripts.methods.tutorial.utils import write_summary
+
+
+class AblationRunnerTests(unittest.TestCase):
+    def test_repair_budget_selects_latest_attempt_within_budget(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = replay_grounding_code_path(
+                root,
+                "procthor/003_valunseen",
+                "instruction_000001",
+            )
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(
+                json.dumps(
+                    {
+                        "steps": {
+                            "grounding_code": {"source": "code_r2"},
+                            "grounding_code_attempts": [
+                                {
+                                    "attempt": 0,
+                                    "stage": "execute_and_verify",
+                                    "status": "failed",
+                                    "code": "code_r0",
+                                },
+                                {
+                                    "attempt": 1,
+                                    "stage": "execute_and_verify",
+                                    "status": "success",
+                                    "code": "code_r1",
+                                },
+                                {
+                                    "attempt": 2,
+                                    "stage": "execute_and_verify",
+                                    "status": "failed",
+                                    "code": "code_r2",
+                                },
+                            ],
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            self.assertEqual(load_replay_grounding_code(root, "procthor/003_valunseen", "instruction_000001", max_repair_attempt=0)[0], "code_r0")
+            self.assertEqual(load_replay_grounding_code(root, "procthor/003_valunseen", "instruction_000001", max_repair_attempt=1)[0], "code_r1")
+            self.assertEqual(load_replay_grounding_code(root, "procthor/003_valunseen", "instruction_000001", max_repair_attempt=2)[0], "code_r2")
+            self.assertEqual(load_replay_grounding_code(root, "procthor/003_valunseen", "instruction_000001")[0], "code_r2")
+
+    def test_suite_contains_requested_non_representation_ablations(self) -> None:
+        names = {str(case["name"]) for case in AUTOMATIC_ABLATION_CASES}
+        self.assertEqual({f"repair_r{budget}" for budget in range(4)} <= names, True)
+        self.assertTrue({"scope_no_temporal", "scope_no_spatial", "scope_none", "no_soft_constraints"} <= names)
+
+    def test_build_all_updates_summary_after_each_completed_episode(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            map_id = "procthor/001_valunseen"
+            for worker_count in (1, 2):
+                with self.subTest(workers=worker_count):
+                    input_root = root / f"input_{worker_count}"
+                    output_root = root / f"output_{worker_count}"
+                    instruction_dir = input_root / map_id / "instruction_files"
+                    instruction_dir.mkdir(parents=True)
+                    metrics = {"HCS": 1.0, "SCS": 1.0, "PL": 1.0, "segment_wise_SPL": 1.0, "details": {"soft_constraints": []}}
+                    for index in (1, 2):
+                        instruction_id = f"instruction_{index:06d}"
+                        (instruction_dir / f"{instruction_id}.json").write_text(
+                            json.dumps({"id": index, "instruction": f"go {index}"}),
+                            encoding="utf-8",
+                        )
+
+                    def fake_pipeline_result(*_args: object, **_kwargs: object) -> SimpleNamespace:
+                        return SimpleNamespace(
+                            trajectory=[[0, 0]],
+                            metadata={"status": "success"},
+                            steps={},
+                            failure_reason=None,
+                            debug_data=None,
+                        )
+                    with (
+                        patch("scripts.methods.groundplan.run.load_map_state", return_value={}),
+                        patch("scripts.methods.groundplan.run.GeminiClient") as client_factory,
+                        patch("scripts.methods.groundplan.run.run_groundplan_pipeline", side_effect=fake_pipeline_result),
+                        patch("scripts.methods.groundplan.run._evaluate", return_value=(metrics, None)),
+                        patch("scripts.methods.groundplan.run.save_trajectory_image_for_record", return_value=None),
+                        patch(
+                            "scripts.methods.groundplan.run.write_summary",
+                            wraps=write_summary,
+                        ) as summary_writer,
+                    ):
+                        client_factory.return_value.trace.return_value = []
+                        results = build_all(
+                            input_root,
+                            output_root,
+                            overwrite=True,
+                            workers=worker_count,
+                        )
+                    self.assertEqual(len(results), 2)
+                    self.assertEqual(summary_writer.call_count, 2)
+                    self.assertEqual(
+                        [len(call.args[0]) for call in summary_writer.call_args_list],
+                        [1, 2],
+                    )
+                    summary = json.loads(
+                        (output_root / "summary.json").read_text(encoding="utf-8")
+                    )
+                    self.assertEqual(summary["overall"]["record_count"], 2)

@@ -1,0 +1,865 @@
+#!/usr/bin/env python3
+"""Run the GroundPlan planner directly from SemPathBench annotations.
+
+This debug runner bypasses the LLM parser and deterministic DSL grounder. It
+converts annotated hard/soft constraints into Grounded IR so the planner can be
+tested in isolation.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+import time
+import uuid
+from pathlib import Path
+from typing import Mapping, Sequence
+
+if __package__ in {None, ""}:
+    repo_root = Path(__file__).resolve().parents[4]
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+
+from scripts.evaluation.evaluate_prediction import evaluate_prediction
+from scripts.evaluation.evaluation_metrics import point_inside_constraint
+from scripts.make_instruction.make_instruction import REPO_ROOT, load_map_state
+from scripts.methods.groundplan.config import DEFAULT_PLANNER_MODE, MAX_EXPANSIONS, PLANNER_MODES
+from scripts.methods.groundplan.grounding import SceneMap
+from scripts.methods.groundplan.ir import (
+    GPRef,
+    GroundedConstraint,
+    GroundedProgram,
+    GroundedSegment,
+)
+from scripts.methods.groundplan.planner import plan_grounded_program
+from scripts.methods.tutorial.utils import (
+    difficulty_from_instruction,
+    display_path,
+    iso_now,
+    load_existing_result,
+    metric_summary,
+    output_path_for_prediction,
+    print_episode_result,
+    result_from_prediction_record,
+    write_prediction_record,
+    write_summary,
+)
+from scripts.methods.util.instructions import (
+    DEFAULT_INSTRUCTION_SET,
+    INSTRUCTION_ROOT,
+    INSTRUCTION_SET_CHOICES,
+    instruction_id_from_payload,
+    iter_instruction_files,
+    load_instruction,
+    map_id_from_instruction_path,
+)
+from scripts.methods.util.methods import save_trajectory_image_for_record
+from scripts.methods.util.workers import normalize_worker_count, run_instruction_jobs
+
+
+METHOD_NAME = "GroundPlanPlannerDebug"
+METHOD_ROOT = REPO_ROOT / "resources" / "methods" / METHOD_NAME
+NEAR_PREFERENCE_ANCHOR_RADIUS_CELLS = 30
+
+
+def _hard_constraints(instruction: Mapping[str, object]) -> list[Mapping[str, object]]:
+    raw = instruction.get("hard_constraints", [])
+    if not isinstance(raw, Sequence) or isinstance(raw, (str, bytes)):
+        return []
+    return [item for item in raw if isinstance(item, Mapping)]
+
+
+def _soft_constraints(instruction: Mapping[str, object]) -> list[Mapping[str, object]]:
+    raw = instruction.get("soft_constraints", [])
+    if not isinstance(raw, Sequence) or isinstance(raw, (str, bytes)):
+        return []
+    return [item for item in raw if isinstance(item, Mapping)]
+
+
+def _ordered_must_pass(instruction: Mapping[str, object]) -> list[Mapping[str, object]]:
+    constraints = [
+        item
+        for item in _hard_constraints(instruction)
+        if item.get("kind") == "must_pass"
+    ]
+    return sorted(
+        constraints,
+        key=lambda item: (
+            float(item.get("order")) if isinstance(item.get("order"), (int, float)) else 0.0,
+            str(item.get("constraint_id", "")),
+        ),
+    )
+
+
+def _constraint_cells(scene: SceneMap, constraint: Mapping[str, object]) -> set[tuple[int, int]]:
+    shape = constraint.get("shape")
+    if shape == "freeform":
+        cells = constraint.get("cells", [])
+        if not isinstance(cells, Sequence) or isinstance(cells, (str, bytes)):
+            return set()
+        result: set[tuple[int, int]] = set()
+        for cell in cells:
+            if (
+                isinstance(cell, Sequence)
+                and not isinstance(cell, (str, bytes))
+                and len(cell) == 2
+                and all(isinstance(value, int) for value in cell)
+            ):
+                row, col = int(cell[0]), int(cell[1])
+                if 0 <= row < scene.grid_size and 0 <= col < scene.grid_size:
+                    result.add((row, col))
+        return result
+
+    center = constraint.get("center")
+    if not isinstance(center, Sequence) or isinstance(center, (str, bytes)) or len(center) != 2:
+        return set()
+    if not all(isinstance(value, (int, float)) and not isinstance(value, bool) for value in center):
+        return set()
+    center_row, center_col = float(center[0]), float(center[1])
+
+    radius = constraint.get("radius")
+    width = constraint.get("width")
+    height = constraint.get("height")
+    if shape == "circle" and isinstance(radius, (int, float)) and not isinstance(radius, bool):
+        row_min = max(0, int(center_row - float(radius) - 1))
+        row_max = min(scene.grid_size - 1, int(center_row + float(radius) + 1))
+        col_min = max(0, int(center_col - float(radius) - 1))
+        col_max = min(scene.grid_size - 1, int(center_col + float(radius) + 1))
+    elif (
+        shape == "rectangle"
+        and isinstance(width, (int, float))
+        and isinstance(height, (int, float))
+        and not isinstance(width, bool)
+        and not isinstance(height, bool)
+    ):
+        row_min = max(0, int(center_row - float(height) / 2 - 1))
+        row_max = min(scene.grid_size - 1, int(center_row + float(height) / 2 + 1))
+        col_min = max(0, int(center_col - float(width) / 2 - 1))
+        col_max = min(scene.grid_size - 1, int(center_col + float(width) / 2 + 1))
+    else:
+        return set()
+
+    cells: set[tuple[int, int]] = set()
+    for row in range(row_min, row_max + 1):
+        for col in range(col_min, col_max + 1):
+            if point_inside_constraint([row, col], constraint):
+                cells.add((row, col))
+    return cells
+
+
+def _annotation_region_ref(scene: SceneMap, constraint: Mapping[str, object], prefix: str) -> GPRef:
+    constraint_id = str(constraint.get("constraint_id") or f"{prefix}_{uuid.uuid4().hex[:8]}")
+    cells = _constraint_cells(scene, constraint)
+    center = constraint.get("center")
+    object_id = constraint.get("object_id")
+    category = str(constraint.get("kind") or constraint.get("preference_type") or "annotation_region")
+    construction: dict[str, object] = {
+        "type": prefix,
+        "constraint_id": constraint_id,
+        "shape": str(constraint.get("shape")),
+    }
+    if isinstance(object_id, int) and not isinstance(object_id, bool):
+        construction["object_id"] = object_id
+    ref_center = None
+    if isinstance(center, Sequence) and not isinstance(center, (str, bytes)) and len(center) == 2:
+        if all(isinstance(value, (int, float)) and not isinstance(value, bool) for value in center):
+            ref_center = (float(center[0]), float(center[1]))
+    if ref_center is None and cells:
+        ref_center = (
+            sum(row for row, _col in cells) / len(cells),
+            sum(col for _row, col in cells) / len(cells),
+        )
+    return GPRef(
+        kind="region",
+        id=f"{prefix}_{constraint_id}",
+        category=category,
+        center=ref_center,
+        cells=frozenset(cells),
+        construction=construction,
+    )
+
+
+def _disk_region_ref(
+    scene: SceneMap,
+    *,
+    region_id: str,
+    category: str,
+    center: tuple[int, int],
+    radius: int,
+    construction: Mapping[str, object],
+) -> GPRef:
+    cells: set[tuple[int, int]] = set()
+    row0, col0 = center
+    for row in range(max(0, row0 - radius), min(scene.grid_size - 1, row0 + radius) + 1):
+        for col in range(max(0, col0 - radius), min(scene.grid_size - 1, col0 + radius) + 1):
+            if (row - row0) ** 2 + (col - col0) ** 2 <= radius**2:
+                cells.add((row, col))
+    return GPRef(
+        kind="region",
+        id=region_id,
+        category=category,
+        center=(float(row0), float(col0)),
+        cells=frozenset(cells),
+        construction=dict(construction),
+    )
+
+
+def _object_ref(scene: SceneMap, object_id: object) -> GPRef | None:
+    if not isinstance(object_id, int) or isinstance(object_id, bool):
+        return None
+    return scene.entities.get(f"object_{object_id}")
+
+
+def _reference_region_ref(scene: SceneMap, reference_region: object, fallback_id: str) -> GPRef | None:
+    if not isinstance(reference_region, Mapping):
+        return None
+    object_ref = _object_ref(scene, reference_region.get("object_id"))
+    if object_ref is not None:
+        return object_ref
+    cells = reference_region.get("cells", [])
+    if not isinstance(cells, Sequence) or isinstance(cells, (str, bytes)):
+        return None
+    parsed_cells: set[tuple[int, int]] = set()
+    for cell in cells:
+        if (
+            isinstance(cell, Sequence)
+            and not isinstance(cell, (str, bytes))
+            and len(cell) == 2
+            and all(isinstance(value, int) for value in cell)
+        ):
+            parsed_cells.add((int(cell[0]), int(cell[1])))
+    if not parsed_cells:
+        return None
+    center = (
+        sum(row for row, _col in parsed_cells) / len(parsed_cells),
+        sum(col for _row, col in parsed_cells) / len(parsed_cells),
+    )
+    return GPRef(
+        kind="region",
+        id=f"soft_ref_{fallback_id}",
+        category="soft_reference_region",
+        center=center,
+        cells=frozenset(parsed_cells),
+        construction={"type": "reference_region"},
+    )
+
+
+def _near_preference_anchor_ref(scene: SceneMap, ref: GPRef, constraint_id: str) -> GPRef:
+    if ref.center is not None:
+        center = (int(round(ref.center[0])), int(round(ref.center[1])))
+    elif ref.cells:
+        center = sorted(ref.cells)[len(ref.cells) // 2]
+    else:
+        center = (0, 0)
+    anchor = _disk_region_ref(
+        scene,
+        region_id=f"near_anchor_{constraint_id}_{ref.id}",
+        category="near_preference_anchor",
+        center=center,
+        radius=NEAR_PREFERENCE_ANCHOR_RADIUS_CELLS,
+        construction={
+            "type": "near_preference_anchor",
+            "constraint_id": constraint_id,
+            "reference_id": ref.id,
+            "room_id": ref.room_id,
+            "radius_cells": NEAR_PREFERENCE_ANCHOR_RADIUS_CELLS,
+        },
+    )
+    if ref.room_id and ref.room_id in scene.rooms:
+        room_cells = scene.rooms[ref.room_id].cells
+        scoped_cells = frozenset(cell for cell in anchor.cells if cell in room_cells)
+        return GPRef(
+            kind=anchor.kind,
+            id=anchor.id,
+            category=anchor.category,
+            room_id=ref.room_id,
+            center=anchor.center,
+            cells=scoped_cells,
+            construction=anchor.construction,
+        )
+    return anchor
+
+
+def _soft_constraint_scope_ref(scene: SceneMap, constraint: Mapping[str, object]) -> GPRef | None:
+    cells = _constraint_cells(scene, constraint)
+    if not cells:
+        return None
+    constraint_id = str(constraint.get("constraint_id") or uuid.uuid4().hex[:8])
+    return GPRef(
+        kind="region",
+        id=f"soft_scope_{constraint_id}",
+        category="soft_scope",
+        center=(
+            sum(row for row, _col in cells) / len(cells),
+            sum(col for _row, col in cells) / len(cells),
+        ),
+        cells=frozenset(cells),
+        construction={
+            "type": "soft_constraint_scope",
+            "constraint_id": constraint_id,
+            "shape": str(constraint.get("shape")),
+        },
+    )
+
+
+def _annotation_constraints(
+    scene: SceneMap,
+    instruction: Mapping[str, object],
+) -> tuple[tuple[GroundedConstraint, ...], GPRef | None, dict[str, object]]:
+    constraints: list[GroundedConstraint] = []
+    dump: dict[str, object] = {
+        "hard_constraints": [],
+        "must_avoid_constraints": [],
+        "soft_constraints": [],
+        "skipped_soft_constraints": [],
+    }
+
+    ordered_must_pass = _ordered_must_pass(instruction)
+    must_pass_refs: list[GPRef] = []
+    must_pass_dump_rows: list[tuple[Mapping[str, object], GPRef]] = []
+    for item in ordered_must_pass:
+        ref = _annotation_region_ref(scene, item, "must_pass")
+        must_pass_refs.append(ref)
+        must_pass_dump_rows.append((item, ref))
+    if must_pass_refs:
+        constraints.append(
+            GroundedConstraint(
+                kind="require_visit_in_order",
+                refs=tuple(must_pass_refs),
+                segment_scope=("oracle_s1",),
+            )
+        )
+    for item, ref in must_pass_dump_rows:
+        dump["hard_constraints"].append(  # type: ignore[union-attr]
+            {
+                "constraint_id": item.get("constraint_id"),
+                "kind": item.get("kind"),
+                "order": item.get("order"),
+                "source": item.get("source"),
+                "object_id": item.get("object_id"),
+                "region": ref.to_json(),
+            }
+        )
+    for item in _hard_constraints(instruction):
+        if item.get("kind") != "must_avoid":
+            continue
+        ref = _annotation_region_ref(scene, item, "must_avoid")
+        constraints.append(
+            GroundedConstraint(
+                kind="forbid",
+                refs=(ref,),
+                segment_scope=("oracle_s1",),
+            )
+        )
+        dump["must_avoid_constraints"].append(  # type: ignore[union-attr]
+            {
+                "constraint_id": item.get("constraint_id"),
+                "kind": item.get("kind"),
+                "source": item.get("source"),
+                "object_id": item.get("object_id"),
+                "region": ref.to_json(),
+            }
+        )
+
+    for item in _soft_constraints(instruction):
+        constraint_id = str(item.get("constraint_id") or uuid.uuid4().hex[:8])
+        preference_type = item.get("preference_type")
+        scope_ref = _soft_constraint_scope_ref(scene, item)
+        if preference_type in {"near_preference", "far_preference"}:
+            ref = _reference_region_ref(scene, item.get("reference_region"), constraint_id)
+            if ref is None:
+                dump["skipped_soft_constraints"].append(  # type: ignore[union-attr]
+                    {"constraint_id": constraint_id, "preference_type": preference_type, "reason": "missing_reference_region"}
+                )
+                continue
+            constraints.append(
+                GroundedConstraint(
+                    kind="prefer_near" if preference_type == "near_preference" else "prefer_far",
+                    refs=(ref,),
+                    segment_scope=("oracle_s1",),
+                    spatial_scope=scope_ref,
+                )
+            )
+            dump["soft_constraints"].append(  # type: ignore[union-attr]
+                {
+                    "constraint_id": constraint_id,
+                    "preference_type": preference_type,
+                    "reference": ref.to_json(),
+                    "scope_region": scope_ref.to_json() if scope_ref else None,
+                }
+            )
+        elif preference_type == "relative_preference":
+            reference_regions = item.get("reference_regions")
+            refs: list[GPRef] = []
+            if isinstance(reference_regions, Sequence) and not isinstance(reference_regions, (str, bytes)):
+                for index, reference_region in enumerate(reference_regions[:2]):
+                    ref = _reference_region_ref(scene, reference_region, f"{constraint_id}_{index}")
+                    if ref is not None:
+                        refs.append(ref)
+            if len(refs) != 2:
+                dump["skipped_soft_constraints"].append(  # type: ignore[union-attr]
+                    {"constraint_id": constraint_id, "preference_type": preference_type, "reason": "requires_two_references"}
+                )
+                continue
+            constraints.append(
+                GroundedConstraint(
+                    kind="prefer_relative",
+                    refs=(refs[0], refs[1]),
+                    relation="closer_to",
+                    segment_scope=("oracle_s1",),
+                    spatial_scope=scope_ref,
+                )
+            )
+            dump["soft_constraints"].append(  # type: ignore[union-attr]
+                {
+                    "constraint_id": constraint_id,
+                    "preference_type": preference_type,
+                    "references": [ref.to_json() for ref in refs],
+                    "relation": "closer_to",
+                    "scope_region": scope_ref.to_json() if scope_ref else None,
+                }
+            )
+        else:
+            if preference_type == "path_shape_preference":
+                dump["skipped_soft_constraints"].append(  # type: ignore[union-attr]
+                    {
+                        "constraint_id": constraint_id,
+                        "preference_type": preference_type,
+                        "reason": "ignored_path_shape_preference",
+                    }
+                )
+            else:
+                dump["skipped_soft_constraints"].append(  # type: ignore[union-attr]
+                    {
+                        "constraint_id": constraint_id,
+                        "preference_type": preference_type,
+                        "reason": "planner_does_not_support_this_annotation_soft_type",
+                    }
+                )
+
+    target = must_pass_dump_rows[-1][1] if must_pass_dump_rows else None
+    dump["target"] = target.to_json() if target else None
+    return tuple(constraints), target, dump
+
+
+def _scope_matches_segment(
+    constraint: Mapping[str, object],
+    previous_order: object,
+    target_order: object,
+) -> bool:
+    scope = constraint.get("scope")
+    if not isinstance(scope, Mapping):
+        return True
+    if scope.get("type") == "global":
+        return True
+    if scope.get("type") != "between_hard_constraints":
+        return True
+    from_order = scope.get("from_order")
+    to_order = scope.get("to_order")
+    return from_order == previous_order and to_order == target_order
+
+
+def _ground_soft_constraint(
+    scene: SceneMap,
+    item: Mapping[str, object],
+    *,
+    segment_id: str,
+) -> tuple[GroundedConstraint | None, dict[str, object]]:
+    constraint_id = str(item.get("constraint_id") or uuid.uuid4().hex[:8])
+    preference_type = item.get("preference_type")
+    scope_ref = _soft_constraint_scope_ref(scene, item)
+    if preference_type in {"near_preference", "far_preference"}:
+        ref = _reference_region_ref(scene, item.get("reference_region"), constraint_id)
+        if ref is None:
+            return None, {
+                "constraint_id": constraint_id,
+                "preference_type": preference_type,
+                "reason": "missing_reference_region",
+            }
+        return (
+            GroundedConstraint(
+                kind="prefer_near" if preference_type == "near_preference" else "prefer_far",
+                refs=(ref,),
+                segment_scope=(segment_id,),
+                spatial_scope=scope_ref,
+            ),
+            {
+                "constraint_id": constraint_id,
+                "preference_type": preference_type,
+                "reference": ref.to_json(),
+                "scope_region": scope_ref.to_json() if scope_ref else None,
+                "segment_id": segment_id,
+            },
+        )
+    if preference_type == "relative_preference":
+        reference_regions = item.get("reference_regions")
+        refs: list[GPRef] = []
+        if isinstance(reference_regions, Sequence) and not isinstance(reference_regions, (str, bytes)):
+            for index, reference_region in enumerate(reference_regions[:2]):
+                ref = _reference_region_ref(scene, reference_region, f"{constraint_id}_{index}")
+                if ref is not None:
+                    refs.append(ref)
+        if len(refs) != 2:
+            return None, {
+                "constraint_id": constraint_id,
+                "preference_type": preference_type,
+                "reason": "requires_two_references",
+            }
+        return (
+            GroundedConstraint(
+                kind="prefer_relative",
+                refs=(refs[0], refs[1]),
+                relation="closer_to",
+                segment_scope=(segment_id,),
+                spatial_scope=scope_ref,
+            ),
+            {
+                "constraint_id": constraint_id,
+                "preference_type": preference_type,
+                "references": [ref.to_json() for ref in refs],
+                "relation": "closer_to",
+                "scope_region": scope_ref.to_json() if scope_ref else None,
+                "segment_id": segment_id,
+            },
+        )
+    return None, {
+        "constraint_id": constraint_id,
+        "preference_type": preference_type,
+        "reason": "ignored_path_shape_preference" if preference_type == "path_shape_preference" else "unsupported_soft_type",
+    }
+
+
+def _grounded_program_from_annotations(
+    scene: SceneMap,
+    instruction: Mapping[str, object],
+) -> tuple[GroundedProgram, dict[str, object]]:
+    ordered_must_pass = _ordered_must_pass(instruction)
+    if not ordered_must_pass:
+        return (
+            GroundedProgram(
+                segments=(),
+                bindings={},
+                status="failed",
+                failure_reason="NO_MUST_PASS_TARGET: annotation planner needs at least one must_pass.",
+            ),
+            {"hard_constraints": [], "must_avoid_constraints": [], "soft_constraints": [], "skipped_soft_constraints": []},
+        )
+
+    must_pass_rows = [
+        (item, _annotation_region_ref(scene, item, "must_pass"))
+        for item in ordered_must_pass
+    ]
+    dump: dict[str, object] = {
+        "hard_constraints": [
+            {
+                "constraint_id": item.get("constraint_id"),
+                "kind": item.get("kind"),
+                "order": item.get("order"),
+                "source": item.get("source"),
+                "object_id": item.get("object_id"),
+                "region": ref.to_json(),
+            }
+            for item, ref in must_pass_rows
+        ],
+        "must_avoid_constraints": [],
+        "soft_constraints": [],
+        "skipped_soft_constraints": [],
+    }
+
+    segments: list[GroundedSegment] = []
+    previous_ref = scene.start
+    previous_order: object = None
+    for index, (item, target_ref) in enumerate(must_pass_rows, start=1):
+        segment_id = f"oracle_s{index}"
+        target_order = item.get("order")
+        segment_constraints: list[GroundedConstraint] = []
+
+        for hard in _hard_constraints(instruction):
+            if hard.get("kind") != "must_avoid" or not _scope_matches_segment(hard, previous_order, target_order):
+                continue
+            ref = _annotation_region_ref(scene, hard, "must_avoid")
+            segment_constraints.append(
+                GroundedConstraint(kind="forbid", refs=(ref,), segment_scope=(segment_id,))
+            )
+            dump["must_avoid_constraints"].append(  # type: ignore[union-attr]
+                {
+                    "constraint_id": hard.get("constraint_id"),
+                    "kind": hard.get("kind"),
+                    "source": hard.get("source"),
+                    "object_id": hard.get("object_id"),
+                    "region": ref.to_json(),
+                    "segment_id": segment_id,
+                }
+            )
+
+        for soft in _soft_constraints(instruction):
+            if not _scope_matches_segment(soft, previous_order, target_order):
+                continue
+            if soft.get("preference_type") == "path_shape_preference":
+                dump["skipped_soft_constraints"].append(  # type: ignore[union-attr]
+                    {
+                        "constraint_id": soft.get("constraint_id"),
+                        "preference_type": "path_shape_preference",
+                        "reason": "ignored_path_shape_preference",
+                        "segment_id": segment_id,
+                    }
+                )
+                continue
+            grounded_soft, soft_dump = _ground_soft_constraint(scene, soft, segment_id=segment_id)
+            if grounded_soft is None:
+                dump["skipped_soft_constraints"].append(soft_dump)  # type: ignore[union-attr]
+                continue
+            segment_constraints.append(grounded_soft)
+            if soft.get("preference_type") == "near_preference" and grounded_soft.refs:
+                near_anchor = _near_preference_anchor_ref(
+                    scene,
+                    grounded_soft.refs[0],
+                    str(soft.get("constraint_id") or uuid.uuid4().hex[:8]),
+                )
+                segment_constraints.append(
+                    GroundedConstraint(
+                        kind="require_visit",
+                        refs=(near_anchor,),
+                        segment_scope=(segment_id,),
+                    )
+                )
+                soft_dump["planner_use"] = "near_reference_anchor"
+                soft_dump["near_anchor"] = near_anchor.to_json()
+            dump["soft_constraints"].append(soft_dump)  # type: ignore[union-attr]
+
+        segments.append(
+            GroundedSegment(
+                id=segment_id,
+                start_reference=previous_ref,
+                target=target_ref,
+                constraints=tuple(segment_constraints),
+            )
+        )
+        previous_ref = target_ref
+        previous_order = target_order
+
+    if not segments:
+        return (
+            GroundedProgram(
+                segments=(),
+                bindings={},
+                status="failed",
+                failure_reason="NO_MUST_PASS_TARGET: annotation planner needs at least one must_pass.",
+            ),
+            dump,
+        )
+    return (
+        GroundedProgram(
+            segments=tuple(segments),
+            bindings={"start_position": scene.start, "annotation_target": segments[-1].target},
+        ),
+        dump,
+    )
+
+
+def _intermediate_path(output_path: Path) -> Path:
+    return output_path.with_suffix(".steps.json")
+
+
+def _write_json(path: Path, payload: Mapping[str, object]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def _run_one(
+    instruction_file: Path,
+    *,
+    input_root: Path,
+    output_root: Path,
+    max_expansions: int,
+    planner_mode: str,
+    planner_heuristic_weight: float,
+) -> dict[str, object]:
+    start_time = time.perf_counter()
+    instruction = load_instruction(instruction_file)
+    map_id = map_id_from_instruction_path(instruction_file, input_root)
+    instruction_id = instruction_id_from_payload(instruction_file, instruction)
+    map_state = load_map_state(map_id)
+    scene = SceneMap(map_state, instruction)
+    grounded, annotation_dump = _grounded_program_from_annotations(scene, instruction)
+    planned = plan_grounded_program(
+        scene, grounded, max_expansions=max_expansions,
+        planner_mode=planner_mode, heuristic_weight=planner_heuristic_weight,
+    )
+    trajectory = planned.trajectory or [[row, col] for row, col in scene.start.cells] or []
+    metrics = evaluate_prediction(trajectory, map_id=map_id, instruction_id=instruction_id)
+
+    output_path = output_path_for_prediction(output_root, map_id, instruction_id)
+    steps_path = _intermediate_path(output_path)
+    record = {
+        "version": 1,
+        "method": METHOD_NAME,
+        "prediction_id": f"{METHOD_NAME}_{uuid.uuid4().hex[:8]}",
+        "map_id": map_id,
+        "scene_id": str(instruction.get("map_id") or map_id),
+        "instruction_id": instruction_id,
+        "difficulty_level": difficulty_from_instruction(instruction),
+        "instruction_file": display_path(instruction_file),
+        "created_at": iso_now(),
+        "trajectory": trajectory,
+        "metrics": metrics,
+        "metrics_summary": metric_summary(metrics),
+        "planner_debug": {
+            "status": planned.status,
+            "failure_reason": planned.failure_reason,
+            "mode": planner_mode,
+            "details": dict(planned.details),
+            "intermediate_steps_path": display_path(steps_path),
+            "input_contract": (
+                "Oracle debug mode: uses annotated hard_constraints and soft_constraints "
+                "to isolate the planner. It bypasses parser and DSL grounder."
+            ),
+        },
+        "instruction": {
+            "text": instruction.get("instruction", ""),
+            "difficulty_level": instruction.get("difficulty_level", ""),
+            "template_instruction_id": instruction.get("template_instruction_id"),
+        },
+    }
+    save_trajectory_image_for_record(
+        record,
+        map_state,
+        trajectory,
+        output_path,
+        nested_record_keys=("planner_debug",),
+        constraint_overlays={
+            "hard_constraints": _hard_constraints(instruction),
+            "soft_constraints": _soft_constraints(instruction),
+        },
+    )
+    runtime_seconds = time.perf_counter() - start_time
+    record["runtime_seconds"] = runtime_seconds
+    record["runtime"] = {"seconds": runtime_seconds, "status": "written"}
+    record["planner_debug"]["runtime_seconds"] = runtime_seconds  # type: ignore[index]
+    write_prediction_record(output_path, record)
+    _write_json(
+        steps_path,
+        {
+            "version": 1,
+            "method": METHOD_NAME,
+            "map_id": map_id,
+            "instruction_id": instruction_id,
+            "instruction_text": instruction.get("instruction", ""),
+            "annotation_constraints": annotation_dump,
+            "grounded_program": grounded.to_json(),
+            "planner": planned.to_json(),
+            "metrics_summary": metric_summary(metrics),
+            "final_status": planned.status,
+            "failure_reason": planned.failure_reason,
+        },
+    )
+    return result_from_prediction_record(record, output_path)
+
+
+def build_all(
+    input_root: Path,
+    output_root: Path,
+    *,
+    instruction_set: str,
+    limit: int | None,
+    instruction_file: Path | None,
+    max_expansions: int,
+    planner_mode: str,
+    planner_heuristic_weight: float,
+    workers: int,
+    overwrite: bool,
+) -> list[dict[str, object]]:
+    input_root = input_root.resolve()
+    output_root = output_root.resolve()
+    if instruction_file is not None:
+        instruction_files = [instruction_file.resolve()]
+    else:
+        instruction_files = iter_instruction_files(input_root, instruction_set=instruction_set)
+    if limit is not None and limit < 0:
+        raise ValueError("--limit must be non-negative; use 0 to run all instructions.")
+    if limit is not None and limit > 0 and instruction_file is None:
+        instruction_files = instruction_files[:limit]
+    results: list[dict[str, object]] = []
+    total = len(instruction_files)
+
+    def run_one(_index: int, instruction_file: Path) -> dict[str, object]:
+        instruction = load_instruction(instruction_file)
+        map_id = map_id_from_instruction_path(instruction_file, input_root)
+        instruction_id = instruction_id_from_payload(instruction_file, instruction)
+        output_path = output_path_for_prediction(output_root, map_id, instruction_id)
+        if output_path.exists() and not overwrite:
+            return load_existing_result(output_path, map_id, instruction_id)
+        return _run_one(
+            instruction_file,
+            input_root=input_root,
+            output_root=output_root,
+            max_expansions=max_expansions,
+            planner_mode=planner_mode,
+            planner_heuristic_weight=planner_heuristic_weight,
+        )
+
+    worker_count = normalize_worker_count(workers)
+    if worker_count > 1:
+        print(f"workers={worker_count}", flush=True)
+    jobs = run_instruction_jobs(
+        instruction_files,
+        workers=worker_count,
+        run_one=run_one,
+    )
+    for completed, (input_index, result) in enumerate(jobs, start=1):
+        results.append(result)
+        results.sort(key=lambda item: str(item.get("path") or ""))
+        write_summary(results, input_root, output_root, method_name=METHOD_NAME, evaluate=True)
+        print_episode_result(
+            completed,
+            total,
+            {**result, "episode_index": input_index},
+        )
+    written = sum(1 for item in results if item["status"] == "written")
+    skipped = sum(1 for item in results if item["status"] == "skipped_exists")
+    failed = sum(1 for item in results if item["status"] == "failed")
+    print(f"total={len(results)} written={written} skipped={skipped} failed={failed}", flush=True)
+    return results
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Debug GroundPlan planner with benchmark annotations.")
+    parser.add_argument("--input-root", type=Path, default=INSTRUCTION_ROOT)
+    parser.add_argument("--output-root", type=Path, default=METHOD_ROOT)
+    parser.add_argument("--set", dest="instruction_set", choices=INSTRUCTION_SET_CHOICES, default=DEFAULT_INSTRUCTION_SET)
+    parser.add_argument("--limit", type=int, default=1)
+    parser.add_argument("--instruction-file", type=Path)
+    parser.add_argument("--max-expansions", type=int, default=MAX_EXPANSIONS)
+    parser.add_argument("--planner-mode", choices=PLANNER_MODES, default=DEFAULT_PLANNER_MODE)
+    parser.add_argument("--planner-heuristic-weight", type=float, default=1.0)
+    parser.add_argument("--overwrite", action="store_true")
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    results = build_all(
+        args.input_root,
+        args.output_root,
+        instruction_set=args.instruction_set,
+        limit=args.limit,
+        instruction_file=args.instruction_file,
+        max_expansions=args.max_expansions,
+        planner_mode=args.planner_mode,
+        planner_heuristic_weight=args.planner_heuristic_weight,
+        workers=args.workers,
+        overwrite=args.overwrite,
+    )
+    summary_path = write_summary(
+        results,
+        args.input_root,
+        args.output_root,
+        method_name=METHOD_NAME,
+        evaluate=True,
+    )
+    print(display_path(summary_path))
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,486 @@
+{
+  "dataset": "SemPathBench Procthor valunseen",
+  "source": {
+    "map_root": "resources/maps/procthor/valunseen",
+    "instruction_root": "resources/instructions/procthor"
+  },
+  "scene_statistics": {
+    "scene_count": 40,
+    "object_instances": {
+      "total": 11387,
+      "average_per_scene": 284.675,
+      "unique_category_count": 97,
+      "categories": [
+        "alarm_clock",
+        "apple",
+        "arm_chair",
+        "baseball_bat",
+        "basket_ball",
+        "bed",
+        "book",
+        "boots",
+        "bottle",
+        "bowl",
+        "box",
+        "bread",
+        "butter_knife",
+        "cabinet",
+        "candle",
+        "cart",
+        "cd",
+        "cell_phone",
+        "chair",
+        "cloth",
+        "clothes_dryer",
+        "coffee_machine",
+        "counter_top",
+        "credit_card",
+        "cup",
+        "desk",
+        "desk_lamp",
+        "dining_table",
+        "dish_sponge",
+        "dog_bed",
+        "doorframe",
+        "doorway",
+        "drawer",
+        "dresser",
+        "dumbbell",
+        "egg",
+        "faucet",
+        "floor_lamp",
+        "fork",
+        "fridge",
+        "garbage_bag",
+        "garbage_can",
+        "house_plant",
+        "kettle",
+        "key_chain",
+        "knife",
+        "ladle",
+        "laptop",
+        "laundry_hamper",
+        "lettuce",
+        "microwave",
+        "mug",
+        "newspaper",
+        "ottoman",
+        "painting",
+        "pan",
+        "paper_towel_roll",
+        "pen",
+        "pencil",
+        "pepper_shaker",
+        "pillow",
+        "plate",
+        "plunger",
+        "pot",
+        "potato",
+        "remote_control",
+        "safe",
+        "salt_shaker",
+        "shelf",
+        "side_table",
+        "sink",
+        "sink_basin",
+        "soap_bar",
+        "soap_bottle",
+        "sofa",
+        "spatula",
+        "spoon",
+        "spray_bottle",
+        "statue",
+        "stool",
+        "table_top_decor",
+        "teddy_bear",
+        "television",
+        "tennis_racket",
+        "tissue_box",
+        "toaster",
+        "toilet",
+        "toilet_paper",
+        "tomato",
+        "tv_stand",
+        "vacuum_cleaner",
+        "vase",
+        "wall",
+        "washing_machine",
+        "watch",
+        "window",
+        "wine_bottle"
+      ]
+    },
+    "room_instances": {
+      "total": 342,
+      "average_per_scene": 8.55,
+      "unique_category_count": 4,
+      "categories": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ]
+    }
+  },
+  "episode_statistics": {
+    "overall": {
+      "episode_count": 1000,
+      "instruction_length": {
+        "average_words": 55.781,
+        "average_non_whitespace_characters": 239.779
+      },
+      "room_traversal": {
+        "average_room_transitions": 5.589,
+        "average_rooms_visited": 6.589,
+        "transition_count_distribution": {
+          "0": 0,
+          "1": 19,
+          "2": 128,
+          "3": 186,
+          "4": 168,
+          "5": 119,
+          "6": 68,
+          "7": 58,
+          "8": 55,
+          "9": 39,
+          "10": 53,
+          "11": 31,
+          "12": 36,
+          "13": 14,
+          "14": 8,
+          "15": 10,
+          "16": 4,
+          "17": 1,
+          "18": 1,
+          "19": 2
+        }
+      },
+      "hard_constraints": {
+        "total": 3125,
+        "must_pass": 2820,
+        "must_avoid": 305,
+        "other": 0
+      },
+      "constraint_count_distribution": {
+        "additional_hard_constraints": {
+          "0": 0,
+          "1": 430,
+          "2": 244,
+          "3": 163,
+          "4": 111,
+          "5": 38,
+          "6": 14
+        },
+        "soft_constraints_including_clearance": {
+          "0": 0,
+          "1": 76,
+          "2": 495,
+          "3": 249,
+          "4": 130,
+          "5": 39,
+          "6": 10,
+          "7": 1
+        }
+      },
+      "soft_constraints_excluding_clearance": {
+        "total": 1595,
+        "by_preference_type": {
+          "far_preference": 591,
+          "near_preference": 558,
+          "path_shape_preference": 222,
+          "relative_preference": 224
+        },
+        "clearance_constraints_excluded": 1000
+      }
+    },
+    "easy": {
+      "episode_count": 700,
+      "instruction_length": {
+        "average_words": 35.90571428571429,
+        "average_non_whitespace_characters": 152.99571428571429
+      },
+      "room_traversal": {
+        "average_room_transitions": 3.9814285714285713,
+        "average_rooms_visited": 4.981428571428571,
+        "transition_count_distribution": {
+          "0": 0,
+          "1": 19,
+          "2": 122,
+          "3": 179,
+          "4": 159,
+          "5": 104,
+          "6": 52,
+          "7": 34,
+          "8": 14,
+          "9": 5,
+          "10": 10,
+          "11": 0,
+          "12": 2
+        }
+      },
+      "hard_constraints": {
+        "total": 1742,
+        "must_pass": 1612,
+        "must_avoid": 130,
+        "other": 0
+      },
+      "constraint_count_distribution": {
+        "additional_hard_constraints": {
+          "0": 0,
+          "1": 426,
+          "2": 218,
+          "3": 45,
+          "4": 10,
+          "5": 1
+        },
+        "soft_constraints_including_clearance": {
+          "0": 0,
+          "1": 74,
+          "2": 476,
+          "3": 139,
+          "4": 11
+        }
+      },
+      "soft_constraints_excluding_clearance": {
+        "total": 787,
+        "by_preference_type": {
+          "far_preference": 288,
+          "near_preference": 284,
+          "path_shape_preference": 89,
+          "relative_preference": 126
+        },
+        "clearance_constraints_excluded": 700
+      }
+    },
+    "hard": {
+      "episode_count": 300,
+      "instruction_length": {
+        "average_words": 102.15666666666667,
+        "average_non_whitespace_characters": 442.2733333333333
+      },
+      "room_traversal": {
+        "average_room_transitions": 9.34,
+        "average_rooms_visited": 10.34,
+        "transition_count_distribution": {
+          "0": 0,
+          "1": 0,
+          "2": 6,
+          "3": 7,
+          "4": 9,
+          "5": 15,
+          "6": 16,
+          "7": 24,
+          "8": 41,
+          "9": 34,
+          "10": 43,
+          "11": 31,
+          "12": 34,
+          "13": 14,
+          "14": 8,
+          "15": 10,
+          "16": 4,
+          "17": 1,
+          "18": 1,
+          "19": 2
+        }
+      },
+      "hard_constraints": {
+        "total": 1383,
+        "must_pass": 1208,
+        "must_avoid": 175,
+        "other": 0
+      },
+      "constraint_count_distribution": {
+        "additional_hard_constraints": {
+          "0": 0,
+          "1": 4,
+          "2": 26,
+          "3": 118,
+          "4": 101,
+          "5": 37,
+          "6": 14
+        },
+        "soft_constraints_including_clearance": {
+          "0": 0,
+          "1": 2,
+          "2": 19,
+          "3": 110,
+          "4": 119,
+          "5": 39,
+          "6": 10,
+          "7": 1
+        }
+      },
+      "soft_constraints_excluding_clearance": {
+        "total": 808,
+        "by_preference_type": {
+          "far_preference": 303,
+          "near_preference": 274,
+          "path_shape_preference": 133,
+          "relative_preference": 98
+        },
+        "clearance_constraints_excluded": 300
+      }
+    },
+    "unknown_difficulty_episode_count": 0
+  },
+  "grounding_statistics": {
+    "candidate_definition": "Category-level candidates before relational filtering; generic room/area/space refers to all room instances, and generic object refers to all object instances.",
+    "depth_definition": "Human-annotated referential / relational depth from the reference JSON files.",
+    "easy": {
+      "annotated_episode_count": 700,
+      "reference_count": 2578,
+      "candidate_instances_before_relations": {
+        "all_references": {
+          "count": 2553,
+          "mean": 6.298864081472777,
+          "median": 3.0,
+          "p90": 8.0,
+          "maximum": 320.0
+        },
+        "object_references": {
+          "count": 2019,
+          "mean": 6.637444279346211,
+          "median": 3.0,
+          "p90": 8.0,
+          "maximum": 320.0
+        },
+        "room_references": {
+          "count": 534,
+          "mean": 5.0187265917602994,
+          "median": 3.0,
+          "p90": 10.0,
+          "maximum": 10.0
+        },
+        "ambiguity_rate": 0.8194281237759499,
+        "unresolved_reference_category_count": 25,
+        "unresolved_reference_categories": {
+          "table": 8,
+          "door": 5,
+          "shared space": 3,
+          "point": 2,
+          "large shelf": 2,
+          "counter": 1,
+          "side": 1,
+          "ball": 1,
+          "surface": 1,
+          "place": 1
+        }
+      },
+      "referential_relational_depth": {
+        "per_reference": {
+          "count": 2578,
+          "mean": 2.212567882079131,
+          "median": 2.0,
+          "p90": 4.0,
+          "maximum": 7.0
+        },
+        "episode_maximum": {
+          "count": 700,
+          "mean": 2.98,
+          "median": 3.0,
+          "p90": 4.0,
+          "maximum": 7.0
+        },
+        "episode_total": {
+          "count": 700,
+          "mean": 8.148571428571428,
+          "median": 7.0,
+          "p90": 14.0,
+          "maximum": 27.0
+        }
+      },
+      "grounding_complexity_proxy": {
+        "definition": "depth * log2(1 + category-level candidate instances)",
+        "per_reference": {
+          "count": 2553,
+          "mean": 5.1914015996088505,
+          "median": 4.754887502163468,
+          "p90": 9.509775004326936,
+          "maximum": 32.47576429089403
+        }
+      }
+    },
+    "hard": {
+      "annotated_episode_count": 300,
+      "reference_count": 2510,
+      "candidate_instances_before_relations": {
+        "all_references": {
+          "count": 2466,
+          "mean": 8.454987834549879,
+          "median": 3.0,
+          "p90": 10.0,
+          "maximum": 345.0
+        },
+        "object_references": {
+          "count": 1918,
+          "mean": 9.396767466110532,
+          "median": 3.0,
+          "p90": 9.0,
+          "maximum": 345.0
+        },
+        "room_references": {
+          "count": 548,
+          "mean": 5.158759124087592,
+          "median": 3.0,
+          "p90": 10.0,
+          "maximum": 10.0
+        },
+        "ambiguity_rate": 0.8264395782643957,
+        "unresolved_reference_category_count": 44,
+        "unresolved_reference_categories": {
+          "midpoint": 13,
+          "corner": 9,
+          "door": 5,
+          "ball": 2,
+          "surface": 2,
+          "position": 2,
+          "lamp": 1,
+          "plant": 1,
+          "far end": 1,
+          "passage": 1,
+          "obstacle": 1,
+          "place": 1,
+          "dog": 1,
+          "side": 1,
+          "gap": 1,
+          "perimeter": 1,
+          "center point": 1
+        }
+      },
+      "referential_relational_depth": {
+        "per_reference": {
+          "count": 2510,
+          "mean": 2.3904382470119523,
+          "median": 2.0,
+          "p90": 4.0,
+          "maximum": 9.0
+        },
+        "episode_maximum": {
+          "count": 300,
+          "mean": 3.816666666666667,
+          "median": 4.0,
+          "p90": 5.0,
+          "maximum": 9.0
+        },
+        "episode_total": {
+          "count": 300,
+          "mean": 20.0,
+          "median": 19.0,
+          "p90": 30.0,
+          "maximum": 49.0
+        }
+      },
+      "grounding_complexity_proxy": {
+        "definition": "depth * log2(1 + category-level candidate instances)",
+        "per_reference": {
+          "count": 2466,
+          "mean": 5.850383990481196,
+          "median": 4.754887502163468,
+          "p90": 11.229419688230417,
+          "maximum": 49.74011308159571
+        }
+      }
+    }
+  }
+}

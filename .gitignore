@@ -1,0 +1,7 @@
+/resources/*
+!/resources/.gitkeep
+.codex_backups/
+scripts/methods/lang2ltlv2/Lang2LTL-2/
+__pycache__/
+*.py[cod]
+scripts/methods/api_key.py

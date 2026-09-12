@@ -1,0 +1,189 @@
+{
+  "version": 1,
+  "benchmark": "RouteSemBench ProcTHOR valunseen",
+  "episode_count": 1000,
+  "methods": [
+    "GroundPlan",
+    "OSG-LLM"
+  ],
+  "strongest_baseline": "OSG-LLM",
+  "sources": {
+    "map_root": "resources/maps/procthor/valunseen",
+    "instruction_root": "resources/instructions/procthor",
+    "easy_reference_annotations": "scripts/statics/easy_ref.json",
+    "hard_reference_annotations": "scripts/statics/hard_ref.json",
+    "GroundPlan_results": "resources/methods/groundplan/main_result/procthor",
+    "OSG-LLM_results": "resources/methods/baselines/OSGLLM/procthor",
+    "saved_metric_field": "metrics.HCS"
+  },
+  "definitions": {
+    "reference_depth": "Maximum human-annotated referential/relational depth in the episode.",
+    "candidate_instances": "Maximum category-level candidate count before relational filtering among resolved references in the episode.",
+    "hard_constraints": "Number of variable task hard constraints after excluding the fixed start-anchor must-pass record."
+  },
+  "unresolved_reference_count": 69,
+  "factors": {
+    "reference_depth": {
+      "title": "Reference Depth",
+      "episode_aggregation": "maximum",
+      "bins": [
+        {
+          "label": "1–2",
+          "lower_inclusive": 0,
+          "upper_inclusive": 2,
+          "count": 233,
+          "value_min": 1,
+          "value_max": 2,
+          "mean_hcs": {
+            "GroundPlan": 0.6616595135908441,
+            "OSG-LLM": 0.4395565092989986
+          }
+        },
+        {
+          "label": "3",
+          "lower_inclusive": 3,
+          "upper_inclusive": 3,
+          "count": 394,
+          "value_min": 3,
+          "value_max": 3,
+          "mean_hcs": {
+            "GroundPlan": 0.5987732656514383,
+            "OSG-LLM": 0.37225042301184436
+          }
+        },
+        {
+          "label": "4",
+          "lower_inclusive": 4,
+          "upper_inclusive": 4,
+          "count": 284,
+          "value_min": 4,
+          "value_max": 4,
+          "mean_hcs": {
+            "GroundPlan": 0.5384389671361502,
+            "OSG-LLM": 0.29313380281690143
+          }
+        },
+        {
+          "label": "≥5",
+          "lower_inclusive": 5,
+          "upper_inclusive": null,
+          "count": 89,
+          "value_min": 5,
+          "value_max": 9,
+          "mean_hcs": {
+            "GroundPlan": 0.4166666666666667,
+            "OSG-LLM": 0.14213483146067415
+          }
+        }
+      ]
+    },
+    "candidate_instances": {
+      "title": "Candidate Instances",
+      "episode_aggregation": "maximum",
+      "bins": [
+        {
+          "label": "1–4",
+          "lower_inclusive": 0,
+          "upper_inclusive": 4,
+          "count": 231,
+          "value_min": 1,
+          "value_max": 4,
+          "mean_hcs": {
+            "GroundPlan": 0.7525252525252525,
+            "OSG-LLM": 0.4862914862914863
+          }
+        },
+        {
+          "label": "5–8",
+          "lower_inclusive": 5,
+          "upper_inclusive": 8,
+          "count": 395,
+          "value_min": 5,
+          "value_max": 8,
+          "mean_hcs": {
+            "GroundPlan": 0.569620253164557,
+            "OSG-LLM": 0.37
+          }
+        },
+        {
+          "label": "9–16",
+          "lower_inclusive": 9,
+          "upper_inclusive": 16,
+          "count": 183,
+          "value_min": 9,
+          "value_max": 16,
+          "mean_hcs": {
+            "GroundPlan": 0.5204918032786885,
+            "OSG-LLM": 0.25364298724954465
+          }
+        },
+        {
+          "label": "≥17",
+          "lower_inclusive": 17,
+          "upper_inclusive": null,
+          "count": 191,
+          "value_min": 17,
+          "value_max": 345,
+          "mean_hcs": {
+            "GroundPlan": 0.450261780104712,
+            "OSG-LLM": 0.20986038394415357
+          }
+        }
+      ]
+    },
+    "hard_constraints": {
+      "title": "Number of Hard Constraints",
+      "episode_aggregation": "count excluding start anchor",
+      "bins": [
+        {
+          "label": "1",
+          "lower_inclusive": 0,
+          "upper_inclusive": 1,
+          "count": 430,
+          "value_min": 1,
+          "value_max": 1,
+          "mean_hcs": {
+            "GroundPlan": 0.7232558139534884,
+            "OSG-LLM": 0.5604651162790698
+          }
+        },
+        {
+          "label": "2",
+          "lower_inclusive": 2,
+          "upper_inclusive": 2,
+          "count": 244,
+          "value_min": 2,
+          "value_max": 2,
+          "mean_hcs": {
+            "GroundPlan": 0.6004098360655737,
+            "OSG-LLM": 0.2336065573770492
+          }
+        },
+        {
+          "label": "3",
+          "lower_inclusive": 3,
+          "upper_inclusive": 3,
+          "count": 163,
+          "value_min": 3,
+          "value_max": 3,
+          "mean_hcs": {
+            "GroundPlan": 0.45296523517382414,
+            "OSG-LLM": 0.19120654396728015
+          }
+        },
+        {
+          "label": "≥4",
+          "lower_inclusive": 4,
+          "upper_inclusive": null,
+          "count": 163,
+          "value_min": 4,
+          "value_max": 6,
+          "mean_hcs": {
+            "GroundPlan": 0.299079754601227,
+            "OSG-LLM": 0.09703476482617587
+          }
+        }
+      ]
+    }
+  }
+}

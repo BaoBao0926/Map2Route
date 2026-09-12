@@ -1,0 +1,112 @@
+"""Regression tests for Tutorial route construction."""
+
+from __future__ import annotations
+
+import unittest
+
+from scripts.methods.tutorial.utils import (
+    connect_waypoints_with_astar,
+    tutorial_waypoints,
+)
+from scripts.methods.util.grid_astar import build_traversable_grid
+
+
+class TutorialAvoidPlanningTest(unittest.TestCase):
+    def test_astar_detours_around_active_global_must_avoid(self) -> None:
+        map_state = {
+            "grid_size": 5,
+            "layer_legends": {"occupancy": {"free": {"value": 0}}},
+            "layers": {"occupancy": [[0] * 5 for _ in range(5)]},
+        }
+        instruction = {
+            "start_pose": {"row": 2, "col": 0},
+            "hard_constraints": [
+                {
+                    "constraint_id": "record",
+                    "kind": "must_pass",
+                    "order": 1,
+                    "shape": "freeform",
+                    "cells": [[2, 0]],
+                    "center": [2, 0],
+                },
+                {
+                    "constraint_id": "goal",
+                    "kind": "must_pass",
+                    "order": 2,
+                    "shape": "freeform",
+                    "cells": [[2, 4]],
+                    "center": [2, 4],
+                },
+                {
+                    "constraint_id": "avoid",
+                    "kind": "must_avoid",
+                    "shape": "freeform",
+                    "cells": [[2, 2]],
+                    "center": [2, 2],
+                    "scope": {"type": "global"},
+                },
+            ],
+        }
+        traversable = build_traversable_grid(map_state)
+        waypoints, _details, transitions = tutorial_waypoints(
+            map_state,
+            traversable,
+            instruction,
+        )
+        trajectory, segments = connect_waypoints_with_astar(
+            traversable,
+            waypoints,
+            instruction["hard_constraints"],
+            transitions,
+        )
+
+        self.assertNotIn([2, 2], trajectory)
+        self.assertNotEqual(trajectory, [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]])
+        self.assertEqual(segments[0]["active_must_avoid_ids"], ["avoid"])
+
+    def test_stops_at_first_legal_target_region_cell(self) -> None:
+        map_state = {
+            "grid_size": 7,
+            "layer_legends": {"occupancy": {"free": {"value": 0}}},
+            "layers": {"occupancy": [[0] * 7 for _ in range(7)]},
+        }
+        instruction = {
+            "start_pose": {"row": 3, "col": 0},
+            "hard_constraints": [
+                {
+                    "constraint_id": "record",
+                    "kind": "must_pass",
+                    "order": 1,
+                    "shape": "freeform",
+                    "cells": [[3, 0]],
+                    "center": [3, 0],
+                },
+                {
+                    "constraint_id": "wide_goal",
+                    "kind": "must_pass",
+                    "order": 2,
+                    "shape": "freeform",
+                    "cells": [[3, 4], [3, 5]],
+                    "center": [3, 5],
+                },
+            ],
+        }
+        traversable = build_traversable_grid(map_state)
+        waypoints, _details, transitions = tutorial_waypoints(
+            map_state,
+            traversable,
+            instruction,
+        )
+        trajectory, segments = connect_waypoints_with_astar(
+            traversable,
+            waypoints,
+            instruction["hard_constraints"],
+            transitions,
+        )
+
+        self.assertEqual(trajectory[-1], [3, 4])
+        self.assertEqual(segments[0]["status"], "connected")
+
+
+if __name__ == "__main__":
+    unittest.main()
