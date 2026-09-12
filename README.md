@@ -1,4 +1,11 @@
-# 1.SemPathBench
+# RouteSemBench: Benchmarking Compositional Language-Grounded Route Planning over Semantic Maps
+
+[**Paper**]() | [**Project Page**](https://baobao0926.github.io/RouteSemBench/) | [**Code**](https://github.com/BaoBao0926/RouteSemBench)
+
+## News
+
+
+# 1. RouteSemBench
 
 ## 1.1 Download the Benchmark
 
