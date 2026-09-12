@@ -264,6 +264,32 @@
       border-color: var(--forest);
     }
 
+    .button.release-button {
+      min-width: 220px;
+      min-height: 62px;
+      color: white;
+      background: var(--forest);
+      border-color: var(--forest);
+      box-shadow: 0 6px 18px rgba(23, 38, 37, 0.05);
+    }
+
+    .button.release-button:hover { background: var(--forest-2); }
+
+
+    .button-copy {
+      display: grid;
+      gap: 3px;
+      text-align: center;
+      line-height: 1.05;
+    }
+
+    .button-copy small {
+      color: var(--muted);
+      font-size: 0.64rem;
+      font-weight: 650;
+      letter-spacing: 0.025em;
+    }
+
     .button svg { width: 18px; height: 18px; }
 
     .hero-aside {
@@ -496,12 +522,16 @@
       overflow: hidden;
     }
 
+    .method-section .container {
+      width: min(calc(100% - 40px), 1320px);
+    }
+
     .method-section .eyebrow { color: var(--mint); }
     .method-section .section-head > p:last-child { color: rgba(233, 244, 241, 0.68); }
 
     .method-layout {
       display: grid;
-      grid-template-columns: 0.62fr 1.38fr;
+      grid-template-columns: 0.44fr 1.56fr;
       gap: 44px;
       align-items: center;
     }
@@ -536,6 +566,8 @@
     .method-step p { margin: 0; color: rgba(233, 244, 241, 0.62); font-size: 0.88rem; }
 
     .method-figure {
+      position: relative;
+      left: 29px;
       padding: 12px;
       background: #fff;
       border-radius: var(--radius);
@@ -621,6 +653,117 @@
 
     .delta span { color: var(--muted); font-size: 0.81rem; font-weight: 700; }
 
+    #results .container {
+      width: min(calc(100% - 40px), 1320px);
+    }
+
+    .result-table-panel {
+      padding: clamp(10px, 1.5vw, 20px);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 22px 54px rgba(23, 38, 37, 0.09);
+    }
+
+    .result-table-panel .figure-button { border-radius: 12px; }
+    .result-table-panel img { width: 100%; }
+
+    .result-findings {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .finding-card {
+      min-height: 220px;
+      padding: 27px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .finding-card:nth-child(2) { background: var(--mint-light); }
+
+    .finding-kicker {
+      display: block;
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+      font-weight: 800;
+      letter-spacing: 0.045em;
+      text-transform: uppercase;
+    }
+
+    .finding-card strong {
+      display: block;
+      margin-bottom: 13px;
+      color: var(--forest-2);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.08rem, 1.35vw, 1.22rem);
+      font-weight: 500;
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+    }
+
+    .finding-card p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+    .ablation-block {
+      margin-top: 92px;
+      padding-top: 72px;
+      border-top: 1px solid var(--line);
+    }
+
+    .ablation-heading {
+      max-width: 850px;
+      margin-bottom: 32px;
+    }
+
+    .ablation-heading h3 {
+      margin-bottom: 14px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-weight: 500;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+    }
+
+    .ablation-heading p { margin: 0; color: var(--muted); font-size: 1.04rem; }
+
+    .ablation-findings {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .ablation-finding {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 22px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .ablation-finding > strong {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: var(--forest);
+      border-radius: 13px;
+      font-family: Georgia, serif;
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    .ablation-finding h4 { margin: 0 0 7px; font-size: 1rem; }
+    .ablation-finding p { margin: 0; color: var(--muted); font-size: 0.88rem; }
+
     .analysis-grid {
       display: grid;
       grid-template-columns: 1.18fr 0.82fr;
@@ -653,73 +796,143 @@
     .analysis-note p { margin-bottom: 0; color: var(--muted); }
 
     .real-world {
-      padding-top: 0;
-    }
-
-    .real-card {
       position: relative;
-      padding: 50px;
+      padding: 118px 0;
       color: white;
-      background: linear-gradient(135deg, #123f40, #082d2e);
-      border-radius: 36px;
+      background: linear-gradient(145deg, #123f40, #072a2b);
       overflow: hidden;
-      box-shadow: var(--shadow);
     }
 
-    .real-card::after {
+    .real-world::after {
       content: "";
       position: absolute;
-      width: 340px;
-      height: 340px;
-      right: -170px;
-      top: -170px;
-      border: 70px solid rgba(237, 187, 86, 0.12);
+      width: 440px;
+      height: 440px;
+      right: -220px;
+      top: -220px;
+      border: 82px solid rgba(237, 187, 86, 0.1);
       border-radius: 50%;
+      pointer-events: none;
     }
 
-    .real-head {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 30px;
-      align-items: end;
-      margin-bottom: 34px;
+    .real-world .container { position: relative; z-index: 1; }
+
+    .real-section-head {
+      max-width: 980px;
+      margin-bottom: 42px;
     }
 
-    .real-head h2 {
-      margin: 0;
-      max-width: 700px;
-      font-family: Georgia, serif;
-      font-size: clamp(2.2rem, 5vw, 4.1rem);
-      font-weight: 500;
-      line-height: 1.02;
-      letter-spacing: -0.04em;
-    }
-
-    .real-head .eyebrow {
+    .real-section-head .eyebrow {
+      color: var(--mint);
       font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(2.2rem, 5vw, 4.1rem);
+      font-size: clamp(1.9rem, 3.2vw, 2.9rem);
       font-weight: 500;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.045em;
       line-height: 1.02;
       text-transform: none;
     }
 
-    .real-score { text-align: right; }
-    .real-score strong { display: block; color: var(--yellow); font-family: Georgia, serif; font-size: 3.5rem; line-height: 1; }
-    .real-score span { font-size: 0.78rem; color: rgba(255, 255, 255, 0.62); text-transform: uppercase; letter-spacing: 0.1em; }
+    .real-section-head h2 {
+      margin: 0 0 24px;
+      max-width: 820px;
+      color: white;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.2rem, 4vw, 3.7rem);
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: -0.045em;
+    }
+
+    .real-intro > p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 1rem;
+    }
+
+    .real-result-summary {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 28px;
+      align-items: center;
+      margin-top: 28px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
+    }
 
     .real-figure {
-      position: relative;
-      z-index: 1;
+      margin: 0;
       padding: 12px;
       background: white;
-      border-radius: 20px;
+      border-radius: 22px;
     }
 
     .real-figure .image-caption { color: #64726f; }
     .real-figure .image-caption strong { color: var(--ink); }
+
+    .real-result-number strong {
+      display: block;
+      color: var(--yellow);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 5vw, 4.8rem);
+      font-weight: 500;
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+    }
+
+    .real-result-number span {
+      display: block;
+      margin-top: 12px;
+      color: var(--mint);
+      font-size: 0.78rem;
+      font-weight: 750;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .real-result-summary > p { margin: 0; color: rgba(255, 255, 255, 0.68); }
+
+    .video-heading { margin: 72px 0 22px; }
+
+    .video-heading h3 {
+      margin: 0;
+      color: white;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-weight: 500;
+      letter-spacing: -0.04em;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .video-placeholder {
+      aspect-ratio: 16 / 9;
+      display: grid;
+      place-items: center;
+      min-height: 260px;
+      padding: 30px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.045);
+      border: 1.5px dashed rgba(255, 255, 255, 0.28);
+      border-radius: 22px;
+    }
+
+    .video-placeholder-icon {
+      width: 62px;
+      height: 62px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 18px;
+      color: var(--forest);
+      background: var(--yellow);
+      border-radius: 50%;
+      font-size: 1.15rem;
+    }
+
+    .video-placeholder h4 { margin: 0; color: white; font-size: 1.08rem; }
 
     .resources {
       background: var(--paper-deep);
@@ -848,12 +1061,9 @@
     }
 
     .reveal {
-      opacity: 0;
-      transform: translateY(18px);
-      transition: opacity 650ms ease, transform 650ms ease;
+      opacity: 1;
+      transform: none;
     }
-
-    .reveal.visible { opacity: 1; transform: none; }
 
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -870,10 +1080,14 @@
 
       .hero-aside { max-width: 560px; }
       .method-layout { gap: 30px; }
+      .method-figure { left: 0; }
       .results-layout { gap: 34px; }
       .score-cards { grid-template-columns: repeat(3, 1fr); }
       .score-card { grid-template-columns: 1fr; }
       .score-card.featured { transform: translateY(-8px); }
+      .result-findings { grid-template-columns: 1fr 1fr; }
+      .result-findings .finding-card:last-child { grid-column: 1 / -1; }
+      .ablation-findings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .resource-grid { grid-template-columns: 1fr 1fr; }
     }
 
@@ -914,11 +1128,16 @@
       .score-cards { grid-template-columns: 1fr; }
       .score-card { grid-template-columns: 78px 1fr; }
       .score-card.featured { transform: none; }
+      .result-findings,
+      .ablation-findings { grid-template-columns: 1fr; }
+      .result-findings .finding-card:last-child { grid-column: auto; }
       .delta-row { grid-template-columns: 1fr; }
       .analysis-note { padding: 28px; }
-      .real-card { padding: 28px 18px 18px; border-radius: 24px; }
-      .real-head { grid-template-columns: 1fr; }
-      .real-score { text-align: left; }
+      .real-world { padding: 82px 0; }
+      .real-result-summary { grid-template-columns: 1fr; gap: 18px; }
+      .video-heading { display: block; margin-top: 54px; }
+      .video-grid { grid-template-columns: 1fr; }
+      .video-placeholder { min-height: 220px; }
       .resource-grid { grid-template-columns: 1fr; }
       .resource-card { min-height: 210px; }
       .resource-icon { margin-bottom: 24px; }
@@ -946,8 +1165,9 @@
         <li><a href="#benchmark">Benchmark</a></li>
         <li><a href="#method">GroundPlan</a></li>
         <li><a href="#results">Results</a></li>
-        <li><a href="#resources">Resources</a></li>
-        <li><a class="nav-paper" href="RouteSemBench%20(9).pdf">Paper ↗</a></li>
+        <li><a href="#real-world">Real-world</a></li>
+        <li><a href="#citation">BibTeX</a></li>
+        <li><a class="nav-paper" href="figures/RouteSemBench.pdf">Paper ↗</a></li>
       </ul>
     </nav>
   </header>
@@ -961,15 +1181,12 @@
             <p class="hero-subtitle">RouteSemBench benchmarks whether an agent can resolve compositional references and generate complete routes that obey ordered requirements, scoped constraints, and graded preferences over semantic maps.</p>
             <p class="authors">Anonymous Authors</p>
             <div class="button-row">
-              <a class="button primary" href="RouteSemBench%20(9).pdf">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 15h6M9 18h4"/></svg>
-                Read the paper
+              <a class="button release-button" href="figures/RouteSemBench.pdf" target="_blank" rel="noopener">
+                <span class="button-copy"><strong>Read the paper</strong></span>
               </a>
-              <a class="button" href="https://github.com/BaoBao0926/RouteSemBench">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .7A11.5 11.5 0 0 0 8.36 23.1c.58.1.79-.25.79-.56v-2.02c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.04 1.77 2.72 1.26 3.38.96.1-.75.4-1.26.74-1.55-2.57-.29-5.27-1.28-5.27-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.47.11-3.05 0 0 .97-.31 3.16 1.18a10.9 10.9 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.63 1.58.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.71 5.39-5.29 5.68.42.36.79 1.06.79 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .7Z"/></svg>
-                View code
+              <a class="button release-button" href="https://anonymous.4open.science/r/RouteSemBench-C78B/README.md" target="_blank" rel="noopener">
+                <span class="button-copy"><strong>View code</strong></span>
               </a>
-              <a class="button" href="#benchmark">Explore benchmark ↓</a>
             </div>
           </div>
         </div>
@@ -1057,110 +1274,127 @@
         <div class="section-head reveal">
           <p class="eyebrow">Results</p>
           <h2>Strong gains—and substantial headroom.</h2>
-          <p>Hard Constraint Score (HCS) measures how many must-pass regions are reached in the correct order while respecting must-avoid constraints. GroundPlan improves across hard satisfaction, every soft-preference metric, and path efficiency.</p>
+          <p>Hard Constraint Score (HCS) measures how many must-pass regions are reached in the correct order while respecting must-avoid constraints. GroundPlan improves hard satisfaction, every soft-preference metric, and path efficiency.</p>
         </div>
 
-        <div class="results-layout">
-          <div class="score-cards reveal" aria-label="Hard Constraint Score comparison">
-            <article class="score-card">
-              <div class="score">1.000</div>
-              <div><h3>Human demonstration</h3><p>Easy and Hard HCS</p></div>
-            </article>
-            <article class="score-card featured">
-              <div class="score">.667</div>
-              <div><h3>GroundPlan · Easy</h3><p>+0.299 over the best adapted baseline</p></div>
-            </article>
-            <article class="score-card featured">
-              <div class="score">.375</div>
-              <div><h3>GroundPlan · Hard</h3><p>+0.251 over the best adapted baseline</p></div>
-            </article>
+        <figure class="result-table-panel reveal">
+          <button class="figure-button" type="button" data-full="figures/main_result.png" aria-label="Enlarge main RouteSemBench results table">
+            <img src="figures/main_result.png" alt="Main RouteSemBench results comparing GroundPlan with seven adapted baselines, shortest feasible A-star, and human demonstrations on Easy and Hard episodes" loading="lazy">
+          </button>
+          <figcaption class="image-caption"><strong>Table II · Main results</strong> Performance across hard-constraint satisfaction, five soft-preference metrics, and path efficiency. Click to enlarge.</figcaption>
+        </figure>
+
+        <div class="result-findings reveal">
+          <article class="finding-card">
+            <span class="finding-kicker">Hard constraints</span>
+            <strong>0.667 / 0.375 HCS</strong>
+            <p>GroundPlan improves Easy/Hard HCS by 0.299/0.251 over the strongest adapted baseline, showing substantially better compositional grounding.</p>
+          </article>
+          <article class="finding-card">
+            <span class="finding-kicker">Soft preferences</span>
+            <strong>Best of seven baselines</strong>
+            <p>GroundPlan leads every baseline on Near, Far, Relative, Path-Shape, and Clearance, indicating stronger route-level preference satisfaction.</p>
+          </article>
+          <article class="finding-card">
+            <span class="finding-kicker">Human-level gap</span>
+            <strong>GroundPlan 0.375 vs. Human Demo 1.00 HCS</strong>
+            <p>Despite these gains, GroundPlan remains far from human performance on Hard episodes: it reaches 0.375 HCS and 0.08 Path-Shape, compared with 1.00 HCS and 0.99 for human demonstrations.</p>
+          </article>
+        </div>
+
+        <div class="ablation-block">
+          <div class="ablation-heading reveal">
+            <h3>Ablation study</h3>
+            <p>Controlled variants isolate the contribution of GroundPlan’s grounding strategy, intermediate representation, verification-guided repair, and scope-aware preference modeling.</p>
           </div>
 
-          <div class="result-copy reveal">
-            <p class="lead">Existing methods remain far below human performance when language specifies not only <em>where</em> to go, but <em>how</em> to get there.</p>
-            <p>Across seven representative adapted baselines, GroundPlan achieves the strongest overall results. Yet the remaining gap—especially on compositional Hard episodes and path-shape preferences—shows that RouteSemBench is far from saturated.</p>
-            <div class="delta-row">
-              <div class="delta"><strong>+0.17</strong><span>Easy SPL vs. best baseline</span></div>
-              <div class="delta"><strong>+0.18</strong><span>Hard SPL vs. best baseline</span></div>
+          <figure class="result-table-panel reveal">
+            <button class="figure-button" type="button" data-full="figures/ablation_study.png" aria-label="Enlarge GroundPlan ablation study table">
+              <img src="figures/ablation_study.png" alt="GroundPlan ablation study comparing grounding strategies, RouteIR and LTL, repair rounds, and soft-constraint scope variants" loading="lazy">
+            </button>
+            <figcaption class="image-caption"><strong>Table III · Ablation</strong> Each row changes one GroundPlan component while holding the remaining configuration fixed. Click to enlarge.</figcaption>
+          </figure>
+
+          <div class="ablation-findings reveal">
+            <article class="ablation-finding"><strong>01</strong><div><h4>Executable grounding composes better</h4><p>Code-as-Grounding reaches 0.579 HCS and 0.46 SPL, ahead of ToolCall, Direct ID, and schema-constrained prediction.</p></div></article>
+            <article class="ablation-finding"><strong>02</strong><div><h4>RouteIR fits heterogeneous route semantics</h4><p>Replacing RouteIR with LTL reduces HCS/SPL from 0.579/0.46 to 0.439/0.36.</p></div></article>
+            <article class="ablation-finding"><strong>03</strong><div><h4>Verification-guided repair matters</h4><p>Increasing repair rounds from zero to three raises HCS from 0.395 to 0.579 and Relative from 0.56 to 1.11.</p></div></article>
+            <article class="ablation-finding"><strong>04</strong><div><h4>Preferences need explicit scopes</h4><p>Globalizing temporal or spatial scopes leaves HCS nearly unchanged but weakens Far and Relative; removing soft costs degrades every soft metric.</p></div></article>
+          </div>
+        </div>
+
+        <div class="ablation-block" aria-labelledby="difficulty-title">
+          <div class="ablation-heading reveal">
+            <h3 id="difficulty-title">Difficulty analysis</h3>
+          </div>
+
+          <div class="analysis-grid">
+            <figure class="figure-panel reveal">
+              <button class="figure-button" type="button" data-full="figures/difficulty_analysis.png" aria-label="Enlarge benchmark difficulty analysis figure">
+                <img src="figures/difficulty_analysis.png" alt="Mean HCS of GroundPlan and OSG-LLM as reference depth, candidate instances, and hard constraints increase" loading="lazy">
+              </button>
+              <figcaption class="image-caption"><strong>Difficulty analysis</strong> Performance declines as reference depth, instance ambiguity, and hard-constraint count increase. Click to enlarge.</figcaption>
+            </figure>
+
+            <div class="analysis-note reveal">
+              <h3>Complexity compounds.</h3>
+              <p>RouteSemBench isolates three complementary pressure points: deeper compositional references, more candidate instances before disambiguation, and longer chains of hard constraints. GroundPlan remains strongest, but both methods degrade steadily as each factor grows.</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section aria-labelledby="difficulty-title">
+    <section class="real-world" id="real-world" aria-labelledby="real-title">
       <div class="container">
-        <div class="analysis-grid">
-          <figure class="figure-panel reveal">
-            <button class="figure-button" type="button" data-full="figures/difficulty_analysis.png" aria-label="Enlarge benchmark difficulty analysis figure">
-              <img src="figures/difficulty_analysis.png" alt="Mean HCS of GroundPlan and OSG-LLM as reference depth, candidate instances, and hard constraints increase" loading="lazy">
-            </button>
-            <figcaption class="image-caption"><strong>Difficulty analysis</strong> Performance declines as reference depth, instance ambiguity, and hard-constraint count increase.</figcaption>
-          </figure>
-          <div class="analysis-note reveal">
-            <p class="eyebrow">Difficulty</p>
-            <h3 id="difficulty-title">Complexity compounds.</h3>
-            <p>RouteSemBench isolates three complementary pressure points: deeper compositional references, more candidate instances before disambiguation, and longer chains of hard constraints. GroundPlan remains strongest, but both methods degrade steadily as each factor grows.</p>
+        <div class="real-section-head reveal">
+          <p class="eyebrow">Real-world experiments</p>
+          <h2 id="real-title">Routes that leave the benchmark.</h2>
+          <div class="real-intro">
+            <p>We evaluate GroundPlan on physical robots across 48 episodes in eight indoor scenes, testing whether compositional instructions, hard constraints, and scoped preferences transfer beyond the benchmark.</p>
+            <div class="real-result-summary">
+              <div class="real-result-number"><strong>72.22%</strong><span>Real-world HCS</span></div>
+              <p>The physical experiments demonstrate that GroundPlan can transfer structured route reasoning from pre-built semantic maps to real robot execution.</p>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
 
-    <section class="real-world" aria-labelledby="real-title">
-      <div class="container">
-        <div class="real-card reveal">
-          <div class="real-head">
+        <figure class="real-figure reveal">
+          <button class="figure-button" type="button" data-full="figures/realexp.png" aria-label="Enlarge real-world experiments figure">
+            <img src="figures/realexp.png" alt="Qualitative real-world GroundPlan experiments with indoor scenes, semantic maps, and executed trajectories" loading="lazy">
+          </button>
+          <figcaption class="image-caption"><strong>48 episodes · 8 scenes</strong> GroundPlan executes multi-stage instructions with scoped far preferences and must-avoid requirements in real indoor environments.</figcaption>
+        </figure>
+
+        <div class="video-heading reveal">
+          <h3>Robot demonstrations</h3>
+        </div>
+
+        <div class="video-grid reveal" aria-label="Reserved space for real-world robot videos">
+          <article class="video-placeholder">
             <div>
-              <p class="eyebrow" style="color: var(--mint);">Real-world</p>
-              <h2 id="real-title">Routes that leave the benchmark.</h2>
+              <span class="video-placeholder-icon" aria-hidden="true">▶</span>
+              <h4>Robot demonstration 01</h4>
             </div>
-            <div class="real-score"><strong>72.22%</strong><span>real-world HCS</span></div>
-          </div>
-          <figure class="real-figure">
-            <button class="figure-button" type="button" data-full="figures/realexp.png" aria-label="Enlarge real-world experiments figure">
-              <img src="figures/realexp.png" alt="Qualitative real-world GroundPlan experiments with indoor scenes, semantic maps, and executed trajectories" loading="lazy">
-            </button>
-            <figcaption class="image-caption"><strong>48 episodes · 8 scenes</strong> GroundPlan executes multi-stage instructions with scoped far preferences and must-avoid requirements in real indoor environments.</figcaption>
-          </figure>
+          </article>
+          <article class="video-placeholder">
+            <div>
+              <span class="video-placeholder-icon" aria-hidden="true">▶</span>
+              <h4>Robot demonstration 02</h4>
+            </div>
+          </article>
         </div>
       </div>
     </section>
 
-    <section class="resources" id="resources">
+    <section class="resources" id="citation">
       <div class="container">
-        <div class="section-head reveal">
-          <p class="eyebrow">Resources</p>
-          <h2>Read, run, and build on RouteSemBench.</h2>
-          <p>The paper, benchmark implementation, method adapters, and evaluation tools live together in this project.</p>
-        </div>
-
-        <div class="resource-grid">
-          <a class="resource-card reveal" href="RouteSemBench%20(9).pdf">
-            <span class="resource-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 14h6M9 18h4"/></svg></span>
-            <h3>Paper</h3>
-            <p>Task formulation, benchmark construction, metrics, GroundPlan, and full experimental results.</p>
-            <span class="arrow-link">Open PDF ↗</span>
-          </a>
-          <a class="resource-card reveal" href="https://github.com/BaoBao0926/RouteSemBench">
-            <span class="resource-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"/></svg></span>
-            <h3>Code</h3>
-            <p>Annotation interfaces, adapted baselines, GroundPlan, and the shared evaluation pipeline.</p>
-            <span class="arrow-link">Browse repository ↗</span>
-          </a>
-          <a class="resource-card reveal" href="README.md">
-            <span class="resource-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 0 4 22.5z"/><path d="M4 4.5v18M8 7h8M8 11h8"/></svg></span>
-            <h3>Documentation</h3>
-            <p>Commands for map generation, annotation, metric caches, method runs, and ablation studies.</p>
-            <span class="arrow-link">Read the guide ↗</span>
-          </a>
-        </div>
-
         <div class="citation reveal">
           <div class="citation-top">
             <h3>BibTeX</h3>
             <button class="copy-button" id="copy-citation" type="button">Copy citation</button>
           </div>
-          <pre id="citation-text">@article{bao2026routesembench,
+          <pre id="citation-text">@article{2026RouteSemBench,
   title   = {RouteSemBench: Benchmarking Compositional Language-Grounded Route Planning over Semantic Maps},
   author  = {Anonymous Authors},
   year    = {2026}
