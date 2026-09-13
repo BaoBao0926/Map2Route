@@ -1,16 +1,42 @@
-# RouteSemBench: Benchmarking Compositional Language-Grounded Route Planning over Semantic Maps
+# Map2Route: Benchmarking Compositional Language-Grounded Route Planning over Semantic Maps
 
-[**Paper**]() | [**Github Repo**](https://github.com/BaoBao0926/RouteSemBench) | [**Project Page**](https://baobao0926.github.io/RouteSemBench/)
+[**Paper**](./Map2Route.pdf) | [**Github Repo**](https://github.com/BaoBao0926/RouteSemBench) | [**Project Page**](https://baobao0926.github.io/RouteSemBench/)
+
+![Map2Route overview](figures/teaser.png)
+
+## Overview
+
+Map2Route is a human-curated benchmark for compositional language-grounded route planning over pre-built semantic maps. Given a semantic map, an initial robot position, and a natural-language instruction—but no explicit goal coordinates—a method must generate a complete route that resolves relational, comparative, and nested references while following ordered and scoped route requirements.
+
+The benchmark contains **1,000 evaluation episodes across 40 multi-room scenes**, split into 700 Easy and 300 Hard episodes, plus a separate 50-episode development set on four disjoint scenes. It covers 96 object categories and four room types at 0.05 m/grid resolution.
+
+Map2Route evaluates three complementary dimensions:
+
+- **Hard-requirement satisfaction:** ordered must-pass regions and must-avoid requirements, measured by Hard Constraint Score (HCS).
+- **Soft-preference adherence:** Near, Far, Relative, Path-Shape, and Clearance preferences within global, spatial, or route-stage scopes.
+- **Path efficiency:** how efficiently the complete route fulfills the instruction, measured with SPL.
+
+## Grounding2Route
+
+Grounding2Route is a structured language-to-route framework that separates compositional semantic grounding from geometric planning. It uses executable code-as-grounding to produce a Route Semantic Intermediate Representation (RouteIR), applies verification-guided repair, and deterministically compiles the verified specification into a route with scope-aware sequential planning.
+
+![Grounding2Route pipeline](figures/Grounding2Route.png)
+
+> **Implementation note:** Commands and output directories retain the internal `groundplan` slug for backward compatibility; the method name used in the paper and documentation is **Grounding2Route**.
+
+## Main Results
+
+Across seven adapted representative baselines, Grounding2Route achieves **0.667/0.375 HCS** and **0.53/0.29 SPL** on Easy/Hard episodes, while leading all baselines on all five soft-preference metrics. A substantial gap to human demonstrations remains. In 48 real-world episodes across eight indoor scenes, Grounding2Route achieves **72.22% HCS**.
 
 ## News
 
 
-# 1. RouteSemBench
+# 1. Map2Route
 
 ## 1.1 Download the Benchmark
 
 All benchmark resources are available from the
-[RouteSemBench dataset on Hugging Face](https://huggingface.co/datasets/Muyiaaaa/RouteSemBench).
+[Map2Route dataset on Hugging Face](https://huggingface.co/datasets/Muyiaaaa/RouteSemBench).
 Run the following command from the project root to download the complete benchmark:
 
 ```bash
@@ -79,7 +105,7 @@ For maps that already exist, prefer `migrate`; it does not touch
 new maps or intentionally rerunning ProcTHOR export. Batch outputs are named by
 exported map id, such as `001_train`, `002_train`, and `003_valunseen`; the numeric
 part is the one-based accepted map position. The saved metadata uses `procthor_*`
-fields for the source house and `map_*` fields for the exported SemPathBench map.
+fields for the source house and `map_*` fields for the exported Map2Route map.
 
 ProcTHOR map directories are physically grouped by split:
 `resources/maps/procthor/train/<map_id>/` and
@@ -278,7 +304,7 @@ python scripts/methods/lang2ltlv2/run.py \
       <td><a href="./scripts/methods/iln/README.md">README.md</a></td>
     </tr>
     <tr>
-      <td>GroundPlan</td>
+      <td>Grounding2Route</td>
       <td><pre><code class="language-bash">python scripts/methods/groundplan/run.py \
   --set valunseen \
   --grounding-representation code \
@@ -304,7 +330,7 @@ python scripts/evaluation/recompute_method_metrics.py \
   --method OSGLLM \
   --method SayPlan \
   --method tutorial \
-  --method GroundPlan \
+  --method groundplan \
   --human-expert \
   --workers 1
 ```
@@ -321,9 +347,9 @@ python scripts/evaluation/recompute_method_metrics.py \
 
 - **Evaluation failures:** By default, an exception from the shared evaluator does not remove the episode from aggregate statistics. The script records the original exception, assigns worst-case metrics, and stores the event in the checkpoint `fallbacks` field. Worst-case values set HCS and H-SPL to `0`, use the maximum grounded-region distance for Near, and set the raw Far, Relative, Path-Shape, and Clearance values to `0`. Use `--fail-fast` during evaluator debugging to stop at the first exception without generating a fallback.
 
-# 3. GroundPlan Ablation Run Queue
+# 3. Grounding2Route Ablation Run Queue
 
-Run the representation ablations first. GroundPlan uses the LLM cache in
+Run the representation ablations first. Grounding2Route uses the LLM cache in
 cache-first mode: an existing response is reused, while a cache miss calls the
 LLM and writes the response to the shared cache directory. The new `direct_id`
 and `ltl` representations have their own cache namespaces, so their first runs
@@ -337,13 +363,13 @@ conda activate cl_cotnav
 
 ## 3.1 LLM-Dependent Representation Ablations
 
-All representation ablations use the same `valunseen` split, planner, evaluator, and shared LLM-cache directory. The commands below show only the options that differ from the GroundPlan defaults. Run them from the repository root.
+All representation ablations use the same `valunseen` split, planner, evaluator, and shared LLM-cache directory. The commands below show only the options that differ from the Grounding2Route defaults. Run them from the repository root.
 
 ```bash
-# 1. Full GroundPlan: Code-as-Grounding with verification-guided repair.
+# 1. Full Grounding2Route: Code-as-Grounding with verification-guided repair.
 python scripts/methods/groundplan/run.py --set valunseen --overwrite --verbose
 
-# 2. ToolCall: native calls to the GroundPlan semantic APIs, without repair.
+# 2. ToolCall: native calls to the Grounding2Route semantic APIs, without repair.
 python scripts/methods/groundplan/run.py \
   --set valunseen \
   --grounding-representation tool_call \
@@ -373,7 +399,7 @@ python scripts/methods/groundplan/run.py \
   --overwrite --verbose
 ```
 
-GroundPlan defaults to `--grounding-representation code`, `--workers 1`, and the canonical `main_result` output and cache paths. The ToolCall budgets also default to 32 calls and three retries per identical failed query, so these values do not need to be repeated above.
+Grounding2Route defaults to `--grounding-representation code`, `--workers 1`, and the canonical `main_result` output and cache paths. The ToolCall budgets also default to 32 calls and three retries per identical failed query, so these values do not need to be repeated above.
 
 Schema, Direct ID, and LTL are one-shot representations whose presets already disable parse repair, code refinement, grounding repair, alias retry, execution repair, and IR fallback. The ToolCall command explicitly disables its otherwise enabled tool-repair policy, making all four representation baselines comparable. Invalid outputs are retained and scored as failures.
 
@@ -399,5 +425,5 @@ produces `repair_r0`--`repair_r2`, `scope_no_temporal`, `scope_no_spatial`,
 consolidated `table_iii_summary.json`. The planner case uses exact layered
 multi-source dynamic programming with `max_expansions=0` (unlimited), while all
 other cases retain the canonical sequential planner. The canonical source run
-is already Full GroundPlan with `R=3`; its existing `summary.json` is used as
+is already Full Grounding2Route with `R=3`; its existing `summary.json` is used as
 the baseline instead of running a duplicate `repair_r3` case.

@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="RouteSemBench is a human-curated benchmark for compositional language-grounded route planning over semantic maps.">
+  <meta name="description" content="Map2Route is a human-curated benchmark for compositional language-grounded route planning over semantic maps.">
   <meta name="theme-color" content="#0b3b3c">
-  <meta property="og:title" content="RouteSemBench">
+  <meta property="og:title" content="Map2Route">
   <meta property="og:description" content="Benchmarking compositional language-grounded route planning over semantic maps.">
   <meta property="og:image" content="figures/teaser.png">
-  <title>RouteSemBench — Language-Grounded Route Planning</title>
+  <title>Map2Route — Language-Grounded Route Planning</title>
   <style>
     :root {
       --ink: #172625;
@@ -205,7 +205,7 @@
       margin-bottom: 24px;
       max-width: 1120px;
       font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(2.25rem, 4.5vw, 4.15rem);
+      font-size: clamp(2.1rem, 4.1vw, 3.75rem);
       font-weight: 500;
       letter-spacing: -0.052em;
       line-height: 0.98;
@@ -387,9 +387,14 @@
       text-transform: none;
     }
 
+    #benchmark .section-head {
+      max-width: 100%;
+    }
+
     #benchmark .section-head h2 {
-      font-size: clamp(1.25rem, 1.8vw, 1.65rem);
+      font-size: clamp(1.2rem, 1.7vw, 1.5rem);
       line-height: 1.25;
+      white-space: nowrap;
     }
 
     .section-head > p:last-child {
@@ -436,7 +441,7 @@
 
     .task-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 30px;
       margin-top: 54px;
       align-items: stretch;
@@ -1112,8 +1117,9 @@
       .nav-links .nav-paper { text-align: center; }
       .hero { padding-top: 52px; }
       .hero-grid { gap: 38px; }
+      #benchmark .section-head h2 { white-space: normal; }
       h1 {
-        font-size: clamp(2rem, 9.5vw, 2.75rem);
+        font-size: clamp(1.9rem, 8.8vw, 2.5rem);
         line-height: 1.02;
       }
       .teaser-wrap { margin-top: 42px; border-radius: 18px; }
@@ -1152,22 +1158,22 @@
 
   <header class="site-header" id="site-header">
     <nav class="nav container" aria-label="Primary navigation">
-      <a class="brand" href="#top" aria-label="RouteSemBench home">
+      <a class="brand" href="#top" aria-label="Map2Route home">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="17" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.4 16.2c4.4-1 1.9-6.1 6.9-8.6"/></svg>
         </span>
-        RouteSemBench
+        Map2Route
       </a>
       <button class="menu-button" id="menu-button" type="button" aria-label="Open navigation" aria-expanded="false">
         <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
       <ul class="nav-links" id="nav-links">
         <li><a href="#benchmark">Benchmark</a></li>
-        <li><a href="#method">GroundPlan</a></li>
+        <li><a href="#method">Grounding2Route</a></li>
         <li><a href="#results">Results</a></li>
         <li><a href="#real-world">Real-world</a></li>
         <li><a href="#citation">BibTeX</a></li>
-        <li><a class="nav-paper" href="figures/RouteSemBench.pdf">Paper ↗</a></li>
+        <li><a class="nav-paper" href="Map2Route.pdf">Paper ↗</a></li>
       </ul>
     </nav>
   </header>
@@ -1177,14 +1183,14 @@
       <div class="container">
         <div class="hero-grid">
           <div>
-            <h1><span class="title-accent">RouteSemBench:</span> Benchmarking Compositional Language-Grounded Route Planning over Semantic Maps</h1>
-            <p class="hero-subtitle">RouteSemBench benchmarks whether an agent can resolve compositional references and generate complete routes that obey ordered requirements, scoped constraints, and graded preferences over semantic maps.</p>
+            <h1><span class="title-accent">Map2Route:</span> Benchmarking Compositional Language-Grounded Route Planning over Semantic Maps</h1>
+            <p class="hero-subtitle">Map2Route benchmarks whether an agent can resolve compositional references and generate complete routes that obey ordered requirements, scoped constraints, and graded preferences over semantic maps.</p>
             <p class="authors">Anonymous Authors</p>
             <div class="button-row">
-              <a class="button release-button" href="figures/RouteSemBench.pdf" target="_blank" rel="noopener">
+              <a class="button release-button" href="Map2Route.pdf" target="_blank" rel="noopener">
                 <span class="button-copy"><strong>Read the paper</strong></span>
               </a>
-              <a class="button release-button" href="https://anonymous.4open.science/r/RouteSemBench-C78B/README.md" target="_blank" rel="noopener">
+              <a class="button release-button" href="https://github.com/BaoBao0926/RouteSemBench" target="_blank" rel="noopener">
                 <span class="button-copy"><strong>View code</strong></span>
               </a>
             </div>
@@ -1192,10 +1198,10 @@
         </div>
 
         <figure class="teaser-wrap reveal">
-          <button class="figure-button" type="button" data-full="figures/teaser.png" aria-label="Enlarge RouteSemBench overview figure">
-            <img src="figures/teaser.png" alt="Overview of RouteSemBench showing a semantic map, compositional route instruction, generated route, and evaluation dimensions" fetchpriority="high">
+          <button class="figure-button" type="button" data-full="figures/teaser.png" aria-label="Enlarge Map2Route overview figure">
+            <img src="figures/teaser.png" alt="Overview of Map2Route showing a semantic map, compositional route instruction, generated route, and evaluation dimensions" fetchpriority="high">
           </button>
-          <figcaption class="image-caption"><strong>RouteSemBench</strong> Compositional language-grounded and constraint-aware route planning over semantic maps.</figcaption>
+          <figcaption class="image-caption"><strong>Map2Route</strong> Compositional language-grounded and constraint-aware route planning over semantic maps.</figcaption>
         </figure>
       </div>
     </section>
@@ -1205,14 +1211,14 @@
         <div class="section-head reveal">
           <p class="eyebrow">Benchmark</p>
           <h2>Compositional language-grounded and constraint-aware route planning over semantic maps.</h2>
-          <p>Each episode provides a pre-built semantic map, an initial pose, and a instruction. Models must resolve relational, comparative, and nested references, then generate a complete route that satisfies ordered must-pass and must-avoid requirements together with spatially or temporally scoped preferences.</p>
+          <p>Each episode provides a pre-built semantic map, an initial pose, and an instruction. Models must resolve relational, comparative, and nested references, then generate a complete route that satisfies ordered must-pass and must-avoid requirements together with spatially or temporally scoped preferences.</p>
         </div>
 
         <div class="stats reveal" aria-label="Benchmark statistics">
           <div class="stat"><strong>1,000</strong><span>evaluation episodes</span></div>
           <div class="stat"><strong>40</strong><span>multi-room scenes</span></div>
           <div class="stat"><strong>700 / 300</strong><span>easy / hard split</span></div>
-          <div class="stat"><strong>120h+</strong><span>expert annotation</span></div>
+          <div class="stat"><strong>140h</strong><span>annotation &amp; quality control</span></div>
         </div>
 
         <div class="task-grid">
@@ -1226,11 +1232,16 @@
             <h3>Scoped soft preferences</h3>
             <p>Route quality depends on more than success. Preferences can apply globally, inside a spatial region, or during a particular route stage.</p>
           </article>
+          <article class="task-card reveal">
+            <span class="card-number" aria-hidden="true">3</span>
+            <h3>Complete-route efficiency</h3>
+            <p>Path efficiency measures how directly the complete route fulfills all ordered requirements, rather than scoring only the final destination.</p>
+          </article>
         </div>
 
         <figure class="figure-panel reveal" style="margin-top: 34px;">
           <button class="figure-button" type="button" data-full="figures/statistics.png" aria-label="Enlarge benchmark statistics figure">
-            <img src="figures/statistics.png" alt="Complexity statistics comparing Easy and Hard RouteSemBench episodes" loading="lazy">
+            <img src="figures/statistics.png" alt="Complexity statistics comparing Easy and Hard Map2Route episodes" loading="lazy">
           </button>
           <figcaption class="image-caption"><strong>Benchmark complexity</strong> Hard episodes increase instruction length, room traversal, candidate ambiguity, reference depth, trajectory length, and constraint count.</figcaption>
         </figure>
@@ -1240,8 +1251,8 @@
     <section class="method-section" id="method">
       <div class="container">
         <div class="section-head reveal">
-          <p class="eyebrow">GroundPlan</p>
-          <p>GroundPlan separates compositional semantic grounding from geometric planning. The LLM never outputs a trajectory directly; it produces a verifiable route specification that a deterministic planner compiles into motion.</p>
+          <p class="eyebrow">Grounding2Route</p>
+          <p>Grounding2Route separates compositional semantic grounding from geometric planning. The LLM does not output a trajectory directly; it produces a verifiable Route Semantic Intermediate Representation (RouteIR) that a deterministic planner compiles into a complete route.</p>
         </div>
 
         <div class="method-layout">
@@ -1260,8 +1271,8 @@
             </div>
           </div>
           <figure class="method-figure reveal">
-            <button class="figure-button" type="button" data-full="figures/groundplan.png" aria-label="Enlarge GroundPlan pipeline figure">
-              <img src="figures/groundplan.png" alt="GroundPlan pipeline from code-as-grounding through RouteIR verification to deterministic scope-aware planning" loading="lazy">
+            <button class="figure-button" type="button" data-full="figures/Grounding2Route.png" aria-label="Enlarge Grounding2Route pipeline figure">
+              <img src="figures/Grounding2Route.png" alt="Grounding2Route pipeline from code-as-grounding through RouteIR verification to deterministic scope-aware planning" loading="lazy">
             </button>
             <figcaption class="image-caption"><strong>Pipeline</strong> A clean interface between flexible semantic grounding and deterministic geometric planning.</figcaption>
           </figure>
@@ -1274,12 +1285,12 @@
         <div class="section-head reveal">
           <p class="eyebrow">Results</p>
           <h2>Strong gains—and substantial headroom.</h2>
-          <p>Hard Constraint Score (HCS) measures how many must-pass regions are reached in the correct order while respecting must-avoid constraints. GroundPlan improves hard satisfaction, every soft-preference metric, and path efficiency.</p>
+          <p>Hard Constraint Score (HCS) measures how many must-pass regions are reached in the correct order while respecting must-avoid constraints. Grounding2Route improves hard satisfaction, every soft-preference metric, and path efficiency.</p>
         </div>
 
         <figure class="result-table-panel reveal">
-          <button class="figure-button" type="button" data-full="figures/main_result.png" aria-label="Enlarge main RouteSemBench results table">
-            <img src="figures/main_result.png" alt="Main RouteSemBench results comparing GroundPlan with seven adapted baselines, shortest feasible A-star, and human demonstrations on Easy and Hard episodes" loading="lazy">
+          <button class="figure-button" type="button" data-full="figures/main_result.png" aria-label="Enlarge main Map2Route results table">
+            <img src="figures/main_result.png" alt="Main Map2Route results comparing Grounding2Route with seven adapted baselines, shortest feasible A-star, and human demonstrations on Easy and Hard episodes" loading="lazy">
           </button>
           <figcaption class="image-caption"><strong>Table II · Main results</strong> Performance across hard-constraint satisfaction, five soft-preference metrics, and path efficiency. Click to enlarge.</figcaption>
         </figure>
@@ -1288,31 +1299,31 @@
           <article class="finding-card">
             <span class="finding-kicker">Hard constraints</span>
             <strong>0.667 / 0.375 HCS</strong>
-            <p>GroundPlan improves Easy/Hard HCS by 0.299/0.251 over the strongest adapted baseline, showing substantially better compositional grounding.</p>
+            <p>Grounding2Route improves Easy/Hard HCS by 0.299/0.251 over the strongest adapted baseline, showing substantially better compositional grounding.</p>
           </article>
           <article class="finding-card">
             <span class="finding-kicker">Soft preferences</span>
             <strong>Best of seven baselines</strong>
-            <p>GroundPlan leads every baseline on Near, Far, Relative, Path-Shape, and Clearance, indicating stronger route-level preference satisfaction.</p>
+            <p>Grounding2Route leads every baseline on Near, Far, Relative, Path-Shape, and Clearance, indicating stronger route-level preference satisfaction.</p>
           </article>
           <article class="finding-card">
             <span class="finding-kicker">Human-level gap</span>
-            <strong>GroundPlan 0.375 vs. Human Demo 1.00 HCS</strong>
-            <p>Despite these gains, GroundPlan remains far from human performance on Hard episodes: it reaches 0.375 HCS and 0.08 Path-Shape, compared with 1.00 HCS and 0.99 for human demonstrations.</p>
+            <strong>Grounding2Route 0.375 vs. Human Demo 1.00 HCS</strong>
+            <p>Despite these gains, Grounding2Route remains far from human performance on Hard episodes: it reaches 0.375 HCS and 0.08 Path-Shape, compared with 1.00 HCS and 0.99 for human demonstrations.</p>
           </article>
         </div>
 
         <div class="ablation-block">
           <div class="ablation-heading reveal">
             <h3>Ablation study</h3>
-            <p>Controlled variants isolate the contribution of GroundPlan’s grounding strategy, intermediate representation, verification-guided repair, and scope-aware preference modeling.</p>
+            <p>Controlled variants isolate the contribution of Grounding2Route’s grounding strategy, intermediate representation, verification-guided repair, and scope-aware preference modeling.</p>
           </div>
 
           <figure class="result-table-panel reveal">
-            <button class="figure-button" type="button" data-full="figures/ablation_study.png" aria-label="Enlarge GroundPlan ablation study table">
-              <img src="figures/ablation_study.png" alt="GroundPlan ablation study comparing grounding strategies, RouteIR and LTL, repair rounds, and soft-constraint scope variants" loading="lazy">
+            <button class="figure-button" type="button" data-full="figures/ablation_study.png" aria-label="Enlarge Grounding2Route ablation study table">
+              <img src="figures/ablation_study.png" alt="Grounding2Route ablation study comparing grounding strategies, RouteIR and LTL, repair rounds, and soft-constraint scope variants" loading="lazy">
             </button>
-            <figcaption class="image-caption"><strong>Table III · Ablation</strong> Each row changes one GroundPlan component while holding the remaining configuration fixed. Click to enlarge.</figcaption>
+            <figcaption class="image-caption"><strong>Table III · Ablation</strong> Each row changes one Grounding2Route component while holding the remaining configuration fixed. Click to enlarge.</figcaption>
           </figure>
 
           <div class="ablation-findings reveal">
@@ -1331,14 +1342,14 @@
           <div class="analysis-grid">
             <figure class="figure-panel reveal">
               <button class="figure-button" type="button" data-full="figures/difficulty_analysis.png" aria-label="Enlarge benchmark difficulty analysis figure">
-                <img src="figures/difficulty_analysis.png" alt="Mean HCS of GroundPlan and OSG-LLM as reference depth, candidate instances, and hard constraints increase" loading="lazy">
+                <img src="figures/difficulty_analysis.png" alt="Mean HCS of Grounding2Route and OSG-LLM as reference depth, candidate instances, and hard constraints increase" loading="lazy">
               </button>
               <figcaption class="image-caption"><strong>Difficulty analysis</strong> Performance declines as reference depth, instance ambiguity, and hard-constraint count increase. Click to enlarge.</figcaption>
             </figure>
 
             <div class="analysis-note reveal">
               <h3>Complexity compounds.</h3>
-              <p>RouteSemBench isolates three complementary pressure points: deeper compositional references, more candidate instances before disambiguation, and longer chains of hard constraints. GroundPlan remains strongest, but both methods degrade steadily as each factor grows.</p>
+              <p>Map2Route isolates three complementary pressure points: deeper compositional references, more candidate instances before disambiguation, and longer chains of hard constraints. Grounding2Route remains strongest, but both methods degrade steadily as each factor grows.</p>
             </div>
           </div>
         </div>
@@ -1351,19 +1362,19 @@
           <p class="eyebrow">Real-world experiments</p>
           <h2 id="real-title">Routes that leave the benchmark.</h2>
           <div class="real-intro">
-            <p>We evaluate GroundPlan on physical robots across 48 episodes in eight indoor scenes, testing whether compositional instructions, hard constraints, and scoped preferences transfer beyond the benchmark.</p>
+            <p>We evaluate Grounding2Route on physical robots across 48 episodes in eight indoor scenes, testing whether compositional instructions, hard constraints, and scoped preferences transfer beyond the benchmark.</p>
             <div class="real-result-summary">
               <div class="real-result-number"><strong>72.22%</strong><span>Real-world HCS</span></div>
-              <p>The physical experiments demonstrate that GroundPlan can transfer structured route reasoning from pre-built semantic maps to real robot execution.</p>
+              <p>Of the lost HCS, 73.75% comes from semantic-map construction errors, 22.5% from grounding or route planning, and 3.75% from SLAM issues.</p>
             </div>
           </div>
         </div>
 
         <figure class="real-figure reveal">
           <button class="figure-button" type="button" data-full="figures/realexp.png" aria-label="Enlarge real-world experiments figure">
-            <img src="figures/realexp.png" alt="Qualitative real-world GroundPlan experiments with indoor scenes, semantic maps, and executed trajectories" loading="lazy">
+            <img src="figures/realexp.png" alt="Qualitative real-world Grounding2Route experiments with indoor scenes, semantic maps, and executed trajectories" loading="lazy">
           </button>
-          <figcaption class="image-caption"><strong>48 episodes · 8 scenes</strong> GroundPlan executes multi-stage instructions with scoped far preferences and must-avoid requirements in real indoor environments.</figcaption>
+          <figcaption class="image-caption"><strong>48 episodes · 8 scenes</strong> Grounding2Route executes multi-stage instructions with scoped far preferences and must-avoid requirements in real indoor environments.</figcaption>
         </figure>
 
         <div class="video-heading reveal">
@@ -1394,8 +1405,8 @@
             <h3>BibTeX</h3>
             <button class="copy-button" id="copy-citation" type="button">Copy citation</button>
           </div>
-          <pre id="citation-text">@article{2026RouteSemBench,
-  title   = {RouteSemBench: Benchmarking Compositional Language-Grounded Route Planning over Semantic Maps},
+          <pre id="citation-text">@article{2026Map2Route,
+  title   = {Map2Route: Benchmarking Compositional Language-Grounded Route Planning over Semantic Maps},
   author  = {Anonymous Authors},
   year    = {2026}
 }</pre>
@@ -1406,7 +1417,7 @@
 
   <footer>
     <div class="container footer-inner">
-      <p>RouteSemBench · Compositional language-grounded route planning.</p>
+      <p>Map2Route · Compositional language-grounded route planning.</p>
       <p>Anonymous Authors · 2026</p>
     </div>
   </footer>

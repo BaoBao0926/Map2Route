@@ -19,7 +19,7 @@ DEFAULT_INPUT = STATICS_ROOT / "difficulty_analysis_summary.json"
 DEFAULT_OUTPUT_DIR = STATICS_ROOT / "figures"
 METHODS = ("GroundPlan", "OSG-LLM")
 DISPLAY_NAMES = {
-    "GroundPlan": "GroundPlan",
+    "GroundPlan": "Grounding2Route",
     "OSG-LLM": "OSG-LLM (Second Best)",
 }
 COLORS = {"GroundPlan": "#D95F32", "OSG-LLM": "#377EB8"}
