@@ -1,6 +1,6 @@
 # Map2Route: Benchmarking Compositional Language-Grounded Route Planning over Semantic Maps
 
-[**Paper**](./Map2Route.pdf) | [**Github Repo**](https://github.com/BaoBao0926/RouteSemBench) | [**Project Page**](https://baobao0926.github.io/RouteSemBench/)
+[**Paper**](./Map2Route.pdf) | [**Anonymous Github Repo**](https://anonymous.4open.science/r/Map2Route-F05F/README.md) | [**Anonymous Project Page**](https://anonymous.4open.science/w/Map2Route-F05F/)
 
 ![Map2Route overview](figures/teaser.png)
 
