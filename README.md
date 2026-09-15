@@ -4,7 +4,7 @@
 
 ![Map2Route overview](figures/teaser.png)
 
-## Overview
+<!-- ## Overview
 
 Map2Route is a human-curated benchmark for compositional language-grounded route planning over pre-built semantic maps. Given a semantic map, an initial robot position, and a natural-language instruction—but no explicit goal coordinates—a method must generate a complete route that resolves relational, comparative, and nested references while following ordered and scoped route requirements.
 
@@ -28,7 +28,7 @@ Grounding2Route is a structured language-to-route framework that separates compo
 
 Across seven adapted representative baselines, Grounding2Route achieves **0.667/0.375 HCS** and **0.53/0.29 SPL** on Easy/Hard episodes, while leading all baselines on all five soft-preference metrics. A substantial gap to human demonstrations remains. In 48 real-world episodes across eight indoor scenes, Grounding2Route achieves **72.22% HCS**.
 
-
+ -->
 
 # 1. Map2Route
 
