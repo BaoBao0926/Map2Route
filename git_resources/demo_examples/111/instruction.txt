@@ -1,0 +1,12 @@
+EASY:
+002: Go to the chair closest to the garbage bag. On the way there, do not pass between the vacuum cleaner and the dining table nearest to it. While in the room containing the vacuum cleaner, keep away from the houseplant.\n
+004: Go to a box that is not underneath a dining table. While in the current room, keep away from the houseplant.
+008: Head to the tissue box that is relatively far from your current position. Along the way, stay closer to the dog bed than to the desk beside it.
+009: Go to the garbage can that is farthest from your current position. In the room immediately before the room containing the garbage can, do not pass between the chair and the dog bed. In the room immediately before the room containing the dog bed, stay close to the bowl.\n
+
+HARD：
+018： Go to the TV stand next to the sofa. Then head to the basketball underneath the dresser. On the way to the second destination, do not pass between the vacuum cleaner and the basketball in the same room.
+019： First, head to the houseplant on the countertop. While you are still in the starting room, keep away from the remote control. Then go to the bedroom that contains a dog bed and enter the small area that is almost enclosed by a baseball bat. When you enter this target room, try to stay close to the chair nearest to the bowl. This room is adjacent to three bathrooms; enter the bathroom whose doorway is farthest from your current position in terms of travel distance, and head to the garbage can inside it. Whenever you pass through the room containing the vacuum cleaner, do not go between the vacuum cleaner and the basketball, and do not pass between the baseball bat and the bed.
+020：Go to the chair in a room that contains two stools. The target chair is very close to a cup and is also near a knife. After reaching the chair, proceed to a bathroom where a garbage can and a plunger are located between the sink and the toilet, and head to the toilet in that bathroom. At this point, first circle the dining table beside you once counterclockwise. Then go to another toilet, located in a room where only a plunger lies between the toilet and the sink. On the way to this third destination, when you enter a room containing a dog bed, stay close to the baseball bat in that room. After leaving this bedroom and entering the next bedroom, stay close to the vase on the dining table in that bedroom.
+
+

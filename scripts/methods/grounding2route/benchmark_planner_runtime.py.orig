@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+"""Benchmark Grounding2Route planner backends on frozen grounding code."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import statistics
+import sys
+import time
+from typing import Mapping, Sequence
+
+if __package__ in {None, ""}:
+    repo_root = Path(__file__).resolve().parents[3]
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+
+from scripts.make_instruction.make_instruction import load_map_state
+from scripts.methods.grounding2route.pipeline import Grounding2RouteRunConfig, run_grounding2route_pipeline
+from scripts.methods.grounding2route.run import load_replay_grounding_code
+from scripts.methods.tutorial.utils import write_json_atomic
+from scripts.methods.util.instructions import (
+    INSTRUCTION_ROOT,
+    instruction_id_from_payload,
+    iter_instruction_files,
+    load_instruction,
+    map_id_from_instruction_path,
+)
+
+
+def _quantile(values: Sequence[float], fraction: float) -> float | None:
+    if not values:
+        return None
+    ordered = sorted(values)
+    position = (len(ordered) - 1) * fraction
+    lower = int(position)
+    upper = min(lower + 1, len(ordered) - 1)
+    weight = position - lower
+    return ordered[lower] * (1.0 - weight) + ordered[upper] * weight
+
+
+def _summary(records: Sequence[Mapping[str, object]]) -> dict[str, object]:
+    values = [
+        float(record["planning_wall_seconds"])
+        for record in records
+        if isinstance(record.get("planning_wall_seconds"), (int, float))
+    ]
+    return {
+        "episode_count": len(records),
+        "planned_episode_count": len(values),
+        "total_planning_seconds": sum(values),
+        "mean_planning_seconds": statistics.mean(values) if values else None,
+        "median_planning_seconds": statistics.median(values) if values else None,
+        "p90_planning_seconds": _quantile(values, 0.90),
+        "p95_planning_seconds": _quantile(values, 0.95),
+        "max_planning_seconds": max(values) if values else None,
+    }
+
+
+def _payload(args: argparse.Namespace, records: list[dict[str, object]], elapsed: float) -> dict[str, object]:
+    return {
+        "version": 1,
+        "protocol": "frozen_grounding_planner_only_runtime",
+        "planner_mode": args.planner_mode,
+        "instruction_set": args.instruction_set,
+        "replay_grounding_code_root": str(args.replay_grounding_code_root),
+        "cpu_affinity": sorted(os.sched_getaffinity(0)),
+        "workers": 1,
+        "max_expansions": args.max_expansions,
+        "soft_weight_scale": args.soft_weight_scale,
+        "benchmark_wall_seconds": elapsed,
+        "summary": _summary(records),
+        "records": records,
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--set", dest="instruction_set", default="valunseen")
+    parser.add_argument("--replay-grounding-code-root", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--planner-mode",
+        choices=("sequential_greedy_astar", "global_layered_dp"),
+        required=True,
+    )
+    parser.add_argument("--max-expansions", type=int, default=0)
+    parser.add_argument("--soft-weight-scale", type=float, default=1.0)
+    parser.add_argument("--limit", type=int)
+    parser.add_argument("--overwrite", action="store_true")
+    args = parser.parse_args()
+
+    if args.output.exists() and not args.overwrite:
+        raise FileExistsError(f"Output already exists: {args.output}; pass --overwrite")
+
+    instruction_files = iter_instruction_files(
+        INSTRUCTION_ROOT,
+        instruction_set=args.instruction_set,
+    )
+    if args.limit is not None:
+        instruction_files = instruction_files[: args.limit]
+
+    config = Grounding2RouteRunConfig(
+        max_expansions=args.max_expansions,
+        max_grounding_repairs=0,
+        execution_repair="off",
+        planner_mode=args.planner_mode,
+        planner_heuristic_weight=1.0,
+        soft_weight_scale=args.soft_weight_scale,
+    )
+    records: list[dict[str, object]] = []
+    current_map_id: str | None = None
+    map_state: Mapping[str, object] | None = None
+    benchmark_started = time.perf_counter()
+
+    for index, instruction_file in enumerate(instruction_files, start=1):
+        instruction = load_instruction(instruction_file)
+        map_id = map_id_from_instruction_path(instruction_file, INSTRUCTION_ROOT)
+        instruction_id = instruction_id_from_payload(instruction_file, instruction)
+        if map_id != current_map_id:
+            map_state = load_map_state(map_id)
+            current_map_id = map_id
+        assert map_state is not None
+        grounding_code, replay_metadata = load_replay_grounding_code(
+            args.replay_grounding_code_root,
+            map_id,
+            instruction_id,
+        )
+        result = run_grounding2route_pipeline(
+            map_state,
+            instruction,
+            config=config,
+            llm_client=None,
+            grounding_code_override=grounding_code,
+        )
+        planner_metadata = result.metadata.get("planner")
+        planning_seconds = (
+            planner_metadata.get("planning_wall_seconds")
+            if isinstance(planner_metadata, Mapping)
+            else None
+        )
+        grounded_json = (
+            result.debug_data.grounded.to_json()
+            if result.debug_data is not None and result.debug_data.grounded is not None
+            else None
+        )
+        grounded_digest = (
+            hashlib.sha256(
+                json.dumps(grounded_json, sort_keys=True).encode("utf-8")
+            ).hexdigest()
+            if grounded_json is not None
+            else None
+        )
+        record = {
+            "map_id": map_id,
+            "instruction_id": instruction_id,
+            "pipeline_status": result.metadata.get("status"),
+            "planner_status": (
+                planner_metadata.get("status")
+                if isinstance(planner_metadata, Mapping)
+                else None
+            ),
+            "planning_wall_seconds": planning_seconds,
+            "grounded_program_sha256": grounded_digest,
+            "replay_selection": replay_metadata.get("selection"),
+        }
+        records.append(record)
+        if index % 10 == 0 or index == len(instruction_files):
+            elapsed = time.perf_counter() - benchmark_started
+            write_json_atomic(args.output, _payload(args, records, elapsed))
+        timing_text = (
+            f"{float(planning_seconds):.6f}s"
+            if isinstance(planning_seconds, (int, float))
+            else "N/A"
+        )
+        print(
+            f"[{index}/{len(instruction_files)}] {map_id}/{instruction_id} "
+            f"planner={timing_text} status={record['planner_status']}",
+            flush=True,
+        )
+
+    elapsed = time.perf_counter() - benchmark_started
+    payload = _payload(args, records, elapsed)
+    write_json_atomic(args.output, payload)
+    print(json.dumps(payload["summary"], indent=2), flush=True)
+
+
+if __name__ == "__main__":
+    main()

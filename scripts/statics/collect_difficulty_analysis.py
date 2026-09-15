@@ -3,7 +3,7 @@
 
 This script deliberately reuses the reference parsing and candidate-counting
 logic in ``valunseen_dataset_statistics.py``.  It joins those complexity
-features to the saved per-episode HCS values for GroundPlan and OSG-LLM, then
+features to the saved per-episode HCS values for Grounding2Route and OSG-LLM, then
 writes both a flat CSV and a plot-ready JSON summary.
 """
 
@@ -37,12 +37,12 @@ from valunseen_dataset_statistics import (
 
 
 STATICS_ROOT = Path(__file__).resolve().parent
-DEFAULT_GROUNDPLAN_ROOT = REPO_ROOT / "resources" / "methods" / "groundplan" / "main_result" / "procthor"
+DEFAULT_GROUNDING2ROUTE_ROOT = REPO_ROOT / "resources" / "methods" / "grounding2route" / "main_result" / "procthor"
 DEFAULT_BASELINE_ROOT = REPO_ROOT / "resources" / "methods" / "baselines" / "OSGLLM" / "procthor"
 DEFAULT_CSV_OUTPUT = STATICS_ROOT / "difficulty_analysis_episodes.csv"
 DEFAULT_JSON_OUTPUT = STATICS_ROOT / "difficulty_analysis_summary.json"
 METHOD_COLUMNS = {
-    "GroundPlan": "groundplan_hcs",
+    "Grounding2Route": "grounding2route_hcs",
     "OSG-LLM": "osgllm_hcs",
 }
 
@@ -140,7 +140,7 @@ def collect_rows(
     instruction_root: Path,
     easy_reference_path: Path,
     hard_reference_path: Path,
-    groundplan_root: Path,
+    grounding2route_root: Path,
     baseline_root: Path,
 ) -> list[dict[str, Any]]:
     maps = map_paths(map_root)
@@ -184,7 +184,7 @@ def collect_rows(
                     "candidate_instances": max_candidates,
                     "hard_constraints": hard_count,
                     "unresolved_references": unresolved_count,
-                    "groundplan_hcs": saved_hcs(result_path(groundplan_root, path)),
+                    "grounding2route_hcs": saved_hcs(result_path(grounding2route_root, path)),
                     "osgllm_hcs": saved_hcs(result_path(baseline_root, path)),
                 }
             )
@@ -243,7 +243,7 @@ def build_summary(
     instruction_root: Path,
     easy_reference_path: Path,
     hard_reference_path: Path,
-    groundplan_root: Path,
+    grounding2route_root: Path,
     baseline_root: Path,
 ) -> dict[str, Any]:
     return {
@@ -257,7 +257,7 @@ def build_summary(
             "instruction_root": display_path(instruction_root),
             "easy_reference_annotations": display_path(easy_reference_path),
             "hard_reference_annotations": display_path(hard_reference_path),
-            "GroundPlan_results": display_path(groundplan_root),
+            "Grounding2Route_results": display_path(grounding2route_root),
             "OSG-LLM_results": display_path(baseline_root),
             "saved_metric_field": "metrics.HCS",
         },
@@ -299,7 +299,7 @@ def print_summary(summary: Mapping[str, Any], csv_output: Path, json_output: Pat
             means = item["mean_hcs"]
             print(
                 f"  {item['label']:>4}  n={item['count']:>3}  "
-                f"GroundPlan={means['GroundPlan']:.3f}  OSG-LLM={means['OSG-LLM']:.3f}"
+                f"Grounding2Route={means['Grounding2Route']:.3f}  OSG-LLM={means['OSG-LLM']:.3f}"
             )
 
 
@@ -309,7 +309,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--instruction-root", type=Path, default=DEFAULT_INSTRUCTION_ROOT)
     parser.add_argument("--easy-reference", type=Path, default=DEFAULT_EASY_REFERENCE_PATH)
     parser.add_argument("--hard-reference", type=Path, default=DEFAULT_HARD_REFERENCE_PATH)
-    parser.add_argument("--groundplan-root", type=Path, default=DEFAULT_GROUNDPLAN_ROOT)
+    parser.add_argument("--grounding2route-root", type=Path, default=DEFAULT_GROUNDING2ROUTE_ROOT)
     parser.add_argument("--baseline-root", type=Path, default=DEFAULT_BASELINE_ROOT)
     parser.add_argument("--csv-output", type=Path, default=DEFAULT_CSV_OUTPUT)
     parser.add_argument("--json-output", type=Path, default=DEFAULT_JSON_OUTPUT)
@@ -323,7 +323,7 @@ def main() -> None:
         "instruction_root": args.instruction_root.resolve(),
         "easy_reference_path": args.easy_reference.resolve(),
         "hard_reference_path": args.hard_reference.resolve(),
-        "groundplan_root": args.groundplan_root.resolve(),
+        "grounding2route_root": args.grounding2route_root.resolve(),
         "baseline_root": args.baseline_root.resolve(),
     }
     rows = collect_rows(**path_args)

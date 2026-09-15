@@ -17,13 +17,13 @@ from matplotlib.figure import Figure
 STATICS_ROOT = Path(__file__).resolve().parent
 DEFAULT_INPUT = STATICS_ROOT / "difficulty_analysis_summary.json"
 DEFAULT_OUTPUT_DIR = STATICS_ROOT / "figures"
-METHODS = ("GroundPlan", "OSG-LLM")
+METHODS = ("Grounding2Route", "OSG-LLM")
 DISPLAY_NAMES = {
-    "GroundPlan": "Grounding2Route",
+    "Grounding2Route": "Grounding2Route",
     "OSG-LLM": "OSG-LLM (Second Best)",
 }
-COLORS = {"GroundPlan": "#D95F32", "OSG-LLM": "#377EB8"}
-MARKERS = {"GroundPlan": "o", "OSG-LLM": "s"}
+COLORS = {"Grounding2Route": "#D95F32", "OSG-LLM": "#377EB8"}
+MARKERS = {"Grounding2Route": "o", "OSG-LLM": "s"}
 PANELS = {
     "reference_depth": "Reference depth",
     "candidate_instances": "Candidates",

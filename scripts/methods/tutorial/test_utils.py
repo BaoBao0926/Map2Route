@@ -144,7 +144,7 @@ class PredictionCollectionTest(unittest.TestCase):
             prediction_dir = output_root / map_id
             prediction_dir.mkdir(parents=True)
             prediction = {
-                "method": "GroundPlan",
+                "method": "Grounding2Route",
                 "map_id": map_id,
                 "scene_id": map_id,
                 "instruction_id": "instruction_000001",
@@ -163,7 +163,7 @@ class PredictionCollectionTest(unittest.TestCase):
             (prediction_dir / "instruction_000001.steps.json").write_text(
                 json.dumps(
                     {
-                        "method": "GroundPlan",
+                        "method": "Grounding2Route",
                         "map_id": map_id,
                         "scene_id": map_id,
                         "instruction_id": "instruction_000001",
@@ -174,7 +174,7 @@ class PredictionCollectionTest(unittest.TestCase):
             )
 
             results = collect_prediction_results(
-                output_root, method_name="GroundPlan"
+                output_root, method_name="Grounding2Route"
             )
 
             self.assertEqual(len(results), 1)

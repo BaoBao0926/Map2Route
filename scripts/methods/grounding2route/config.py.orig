@@ -1,0 +1,77 @@
+"""Configuration defaults for the Grounding2Route method."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+from scripts.make_instruction.make_instruction import REPO_ROOT
+
+
+METHOD_NAME = "Grounding2Route"
+METHOD_ROOT = REPO_ROOT / "resources" / "methods" / METHOD_NAME
+PROMPT_DIR = Path(__file__).resolve().parent
+
+DEFAULT_MODEL = "gemini-2.5-flash"
+PARSE_MODES = ("intent", "api")
+PLANNER_MODES = ("global_progress_astar", "sequential_greedy_astar")
+GROUNDING_VARIANTS = (
+    "direct_dsl",
+    "direct_cap",
+    "direct_cap_repair",
+    "ir_to_code",
+    "ir_code_refine",
+    "ir_code_refine_code_repair",
+    "full",
+)
+
+OBJECT_GOAL_RADIUS_METERS = 0.30
+NEAR_RADIUS_METERS = 1.50
+FAR_SIGMA_METERS = 1.50
+RELATIVE_RADIUS_METERS = 1.50
+CLEARANCE_RADIUS_METERS = 0.75
+PATH_SHAPE_RADIUS_METERS = 0.90
+
+WEIGHT_NEAR = 8.00
+WEIGHT_FAR = 96.00
+WEIGHT_RELATIVE = 640.00
+WEIGHT_PATH_SHAPE = 18.00
+WEIGHT_CLEARANCE = 36.00
+# Penalizes heading changes while planning circle/path-shape waypoint stages.
+# Small values remove local zig-zags without overwhelming semantic costs.
+WEIGHT_SMOOTHNESS = 0.02
+
+# Circle waypoint snapping prefers cells with clearance from walls, obstacles,
+# and room boundaries. Object loops can sit farther into open space, while room
+# loops should stay closer to the intended room-scale loop.
+CIRCLE_OBJECT_WAYPOINT_CLEARANCE_CELLS = 16.0
+CIRCLE_OBJECT_WAYPOINT_CLEARANCE_WEIGHT = 8.0
+CIRCLE_ROOM_WAYPOINT_CLEARANCE_CELLS = 10.0
+CIRCLE_ROOM_WAYPOINT_CLEARANCE_WEIGHT = 16.0
+CIRCLE_WAYPOINT_SEARCH_RADIUS_CELLS = 32
+
+MAX_EXPANSIONS = 250_000
+MAX_GOAL_HEURISTIC_CELLS = 512
+MAX_GROUNDING_REPAIRS = 2
+
+ROOM_ALIASES = {
+    "livingroom": "living_room",
+    "living room": "living_room",
+    "bath room": "bathroom",
+}
+
+ENTITY_ALIASES = {
+    "armchair": "arm_chair",
+    "arm chair": "arm_chair",
+    "countertop": "counter_top",
+    "counter top": "counter_top",
+    "plant": "house_plant",
+    "houseplant": "house_plant",
+    "tv": "tv_stand",
+    "television": "tv_stand",
+    "trash can": "garbage_can",
+    "garbage bag": "garbage_bag",
+    "drawer": "dresser",
+    "door": "doorway",
+    "door frame": "doorframe",
+    "shelving unit": "shelf",
+}

@@ -1,4 +1,4 @@
-episode,difficulty,reference_depth,candidate_instances,hard_constraints,unresolved_references,groundplan_hcs,osgllm_hcs
+episode,difficulty,reference_depth,candidate_instances,hard_constraints,unresolved_references,grounding2route_hcs,osgllm_hcs
 procthor/003_valunseen/instruction_000001,easy,2,7,1,0,1.0,1.0
 procthor/003_valunseen/instruction_000002,easy,3,1,1,0,1.0,1.0
 procthor/003_valunseen/instruction_000003,easy,3,3,1,0,1.0,0.0

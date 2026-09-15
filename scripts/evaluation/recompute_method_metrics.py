@@ -287,7 +287,7 @@ def nested_image_record_keys(payload: Mapping[str, object]) -> tuple[str, ...]:
     candidates: list[str] = []
     if isinstance(method, str) and method.strip():
         candidates.append(method.strip().lower())
-    for key in ("groundplan", "sayplan", "osgllm", "limp", "iln"):
+    for key in ("grounding2route", "sayplan", "osgllm", "limp", "iln"):
         if key not in candidates:
             candidates.append(key)
     return tuple(key for key in candidates if isinstance(payload.get(key), Mapping))
@@ -760,8 +760,8 @@ def discover_method_roots(root: Path, methods: Sequence[str] | None) -> list[Pat
                 root / method,
                 root / "baselines" / method,
             ]
-            if method.lower() in {"groundplan", "main"}:
-                candidates.append(root / "groundplan" / "main_result")
+            if method.lower() in {"grounding2route", "main"}:
+                candidates.append(root / "grounding2route" / "main_result")
             resolved.append(next((path for path in candidates if path.exists()), candidates[0]))
         return resolved
     if not root.exists():
@@ -777,9 +777,9 @@ def discover_method_roots(root: Path, methods: Sequence[str] | None) -> list[Pat
             if baseline_root.exists()
             else []
         )
-        groundplan_root = root / "groundplan" / "main_result"
-        if groundplan_root.exists():
-            primary.append(groundplan_root)
+        grounding2route_root = root / "grounding2route" / "main_result"
+        if grounding2route_root.exists():
+            primary.append(grounding2route_root)
         return sorted(primary)
     return sorted(
         path
@@ -1097,7 +1097,7 @@ def main() -> None:
         if args.run_id
         else evaluator_id
     )
-    checkpoint_run_root = DEFAULT_METHOD_ROOT / "groundplan" / "previous" / "diagnostics" / "_metric_recompute" / run_label
+    checkpoint_run_root = DEFAULT_METHOD_ROOT / "grounding2route" / "previous" / "diagnostics" / "_metric_recompute" / run_label
     resume = not args.no_resume and not args.dry_run
 
     def checkpoint_directory(method_root: Path) -> Path:

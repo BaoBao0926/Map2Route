@@ -17,8 +17,8 @@ SECTION_ORDER = ("overall", "easy", "hard")
 
 def summary_sources() -> list[Path]:
 	baseline_summaries = (METHODS_ROOT / "baselines").glob("*/summary.json")
-	groundplan_summary = METHODS_ROOT / "groundplan" / "main_result" / "summary.json"
-	return sorted([*baseline_summaries, *([groundplan_summary] if groundplan_summary.exists() else [])])
+	grounding2route_summary = METHODS_ROOT / "grounding2route" / "main_result" / "summary.json"
+	return sorted([*baseline_summaries, *([grounding2route_summary] if grounding2route_summary.exists() else [])])
 
 
 def load_json_object(path: Path) -> dict[str, Any]:

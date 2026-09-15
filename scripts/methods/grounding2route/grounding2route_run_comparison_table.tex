@@ -1,0 +1,53 @@
+\begin{table}[t]
+    \centering
+    \caption{
+    Performance comparison for Grounding2Route runs on SemPathBench.
+    $N$ denotes the number of evaluated episodes in each split.
+    Intent-Mixed uses JSON intent for initial parsing but DSL repair after grounding failures;
+    Intent-PureJSON keeps both initial parsing and grounding repair in JSON intent format.
+    }
+    \label{tab:grounding2route_run_comparison}
+
+    \resizebox{\linewidth}{!}{
+    \begin{tabular}{l|ccccc|ccccc|ccccc}
+        \toprule
+        \textbf{Method}
+        & \multicolumn{5}{c|}{\textbf{Overall}}
+        & \multicolumn{5}{c|}{\textbf{Easy}}
+        & \multicolumn{5}{c}{\textbf{Hard}} \\
+        \cmidrule(lr){2-6}
+        \cmidrule(lr){7-11}
+        \cmidrule(lr){12-16}
+        & $N$ & PLR & HCS & SCS & OSS
+        & $N$ & PLR & HCS & SCS & OSS
+        & $N$ & PLR & HCS & SCS & OSS \\
+        \midrule
+
+        \textbf{Grounding2Route-1st}
+        & 25 & 0.581 & 0.300 & 0.607 & 0.201
+        & 17 & 0.623 & 0.265 & 0.680 & 0.179
+        & 8 & 0.491 & 0.375 & 0.452 & 0.247 \\
+
+        \textbf{Grounding2Route-2nd}
+        & 50 & 0.635 & 0.490 & 0.646 & 0.338
+        & 34 & 0.707 & 0.515 & 0.717 & 0.367
+        & 16 & 0.482 & 0.438 & 0.495 & 0.276 \\
+
+        \textbf{Grounding2Route-3rd}
+        & 50 & 0.910 & 0.567 & 0.723 & 0.417
+        & 35 & 0.910 & 0.629 & 0.720 & 0.481
+        & 15 & 0.909 & 0.422 & 0.731 & 0.266 \\
+
+        \textbf{Grounding2Route-Intent-Mixed}
+        & 50 & 0.862 & 0.683 & 0.780 & 0.492
+        & 35 & 0.868 & 0.714 & 0.798 & 0.533
+        & 15 & 0.850 & 0.611 & 0.739 & 0.396 \\
+
+        \textbf{Grounding2Route-Intent-PureJSON}
+        & 50 & 0.863 & 0.723 & 0.783 & 0.519
+        & 35 & 0.864 & 0.743 & 0.798 & 0.557
+        & 15 & 0.862 & 0.678 & 0.748 & 0.432 \\
+        \bottomrule
+    \end{tabular}
+    }
+\end{table}

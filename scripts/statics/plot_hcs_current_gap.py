@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plot the Easy/Hard HCS gap between the best baseline, GroundPlan, and humans."""
+"""Plot the Easy/Hard HCS gap between the best baseline, Grounding2Route, and humans."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from matplotlib.path import Path as MplPath
 
 
 DEFAULT_OUTPUT = Path(__file__).resolve().parent / "figures" / "hcs_current_gap"
-SERIES = ("Best Baseline", "GroundPlan", "Human")
+SERIES = ("Best Baseline", "Grounding2Route", "Human")
 COLORS = ("#087CA5", "#E95727", "#6552B5")
 
 
@@ -108,8 +108,8 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--best-baseline-easy", type=float, default=0.368)
     parser.add_argument("--best-baseline-hard", type=float, default=0.124)
-    parser.add_argument("--groundplan-easy", type=float, default=0.667)
-    parser.add_argument("--groundplan-hard", type=float, default=0.375)
+    parser.add_argument("--grounding2route-easy", type=float, default=0.667)
+    parser.add_argument("--grounding2route-hard", type=float, default=0.375)
     parser.add_argument("--human-easy", type=float, default=1.0)
     parser.add_argument("--human-hard", type=float, default=1.0)
     parser.add_argument(
@@ -125,8 +125,8 @@ def main() -> None:
     args = parse_args()
     values = np.asarray(
         [
-            [args.best_baseline_easy, args.groundplan_easy, args.human_easy],
-            [args.best_baseline_hard, args.groundplan_hard, args.human_hard],
+            [args.best_baseline_easy, args.grounding2route_easy, args.human_easy],
+            [args.best_baseline_hard, args.grounding2route_hard, args.human_hard],
         ],
         dtype=float,
     )

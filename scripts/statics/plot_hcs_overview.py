@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plot the overall HCS of GroundPlan and the seven comparison methods."""
+"""Plot the overall HCS of Grounding2Route and the seven comparison methods."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from matplotlib.path import Path as MplPath
 
 ROOT = Path(__file__).resolve().parents[2]
 METHODS = [
-    "GroundPlan",
+    "Grounding2Route",
     "OSGLLM",
     "Lang2LTL",
     "LTLCodeGen",
@@ -26,7 +26,7 @@ METHODS = [
     "LIMP",
 ]
 DISPLAY_NAMES = [
-    "GroundPlan",
+    "Grounding2Route",
     "OSG-LLM",
     "Lang2LTL",
     "LTLCodeGen",
@@ -198,7 +198,7 @@ def main() -> None:
     # Draw method labels manually so the horizontal offset is not reset by
     # Matplotlib's tick layout during the final render.
     label_shifts = {
-        "GroundPlan": 0.40,
+        "Grounding2Route": 0.40,
         "ILN": 0.10,
         "LIMP": 0.15,
     }

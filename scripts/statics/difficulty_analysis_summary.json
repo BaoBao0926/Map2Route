@@ -3,7 +3,7 @@
   "benchmark": "RouteSemBench ProcTHOR valunseen",
   "episode_count": 1000,
   "methods": [
-    "GroundPlan",
+    "Grounding2Route",
     "OSG-LLM"
   ],
   "strongest_baseline": "OSG-LLM",
@@ -12,7 +12,7 @@
     "instruction_root": "resources/instructions/procthor",
     "easy_reference_annotations": "scripts/statics/easy_ref.json",
     "hard_reference_annotations": "scripts/statics/hard_ref.json",
-    "GroundPlan_results": "resources/methods/groundplan/main_result/procthor",
+    "Grounding2Route_results": "resources/methods/grounding2route/main_result/procthor",
     "OSG-LLM_results": "resources/methods/baselines/OSGLLM/procthor",
     "saved_metric_field": "metrics.HCS"
   },
@@ -35,7 +35,7 @@
           "value_min": 1,
           "value_max": 2,
           "mean_hcs": {
-            "GroundPlan": 0.6616595135908441,
+            "Grounding2Route": 0.6616595135908441,
             "OSG-LLM": 0.4395565092989986
           }
         },
@@ -47,7 +47,7 @@
           "value_min": 3,
           "value_max": 3,
           "mean_hcs": {
-            "GroundPlan": 0.5987732656514383,
+            "Grounding2Route": 0.5987732656514383,
             "OSG-LLM": 0.37225042301184436
           }
         },
@@ -59,7 +59,7 @@
           "value_min": 4,
           "value_max": 4,
           "mean_hcs": {
-            "GroundPlan": 0.5384389671361502,
+            "Grounding2Route": 0.5384389671361502,
             "OSG-LLM": 0.29313380281690143
           }
         },
@@ -71,7 +71,7 @@
           "value_min": 5,
           "value_max": 9,
           "mean_hcs": {
-            "GroundPlan": 0.4166666666666667,
+            "Grounding2Route": 0.4166666666666667,
             "OSG-LLM": 0.14213483146067415
           }
         }
@@ -89,7 +89,7 @@
           "value_min": 1,
           "value_max": 4,
           "mean_hcs": {
-            "GroundPlan": 0.7525252525252525,
+            "Grounding2Route": 0.7525252525252525,
             "OSG-LLM": 0.4862914862914863
           }
         },
@@ -101,7 +101,7 @@
           "value_min": 5,
           "value_max": 8,
           "mean_hcs": {
-            "GroundPlan": 0.569620253164557,
+            "Grounding2Route": 0.569620253164557,
             "OSG-LLM": 0.37
           }
         },
@@ -113,7 +113,7 @@
           "value_min": 9,
           "value_max": 16,
           "mean_hcs": {
-            "GroundPlan": 0.5204918032786885,
+            "Grounding2Route": 0.5204918032786885,
             "OSG-LLM": 0.25364298724954465
           }
         },
@@ -125,7 +125,7 @@
           "value_min": 17,
           "value_max": 345,
           "mean_hcs": {
-            "GroundPlan": 0.450261780104712,
+            "Grounding2Route": 0.450261780104712,
             "OSG-LLM": 0.20986038394415357
           }
         }
@@ -143,7 +143,7 @@
           "value_min": 1,
           "value_max": 1,
           "mean_hcs": {
-            "GroundPlan": 0.7232558139534884,
+            "Grounding2Route": 0.7232558139534884,
             "OSG-LLM": 0.5604651162790698
           }
         },
@@ -155,7 +155,7 @@
           "value_min": 2,
           "value_max": 2,
           "mean_hcs": {
-            "GroundPlan": 0.6004098360655737,
+            "Grounding2Route": 0.6004098360655737,
             "OSG-LLM": 0.2336065573770492
           }
         },
@@ -167,7 +167,7 @@
           "value_min": 3,
           "value_max": 3,
           "mean_hcs": {
-            "GroundPlan": 0.45296523517382414,
+            "Grounding2Route": 0.45296523517382414,
             "OSG-LLM": 0.19120654396728015
           }
         },
@@ -179,7 +179,7 @@
           "value_min": 4,
           "value_max": 6,
           "mean_hcs": {
-            "GroundPlan": 0.299079754601227,
+            "Grounding2Route": 0.299079754601227,
             "OSG-LLM": 0.09703476482617587
           }
         }

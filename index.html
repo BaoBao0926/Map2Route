@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#0b3b3c">
   <meta property="og:title" content="Map2Route">
   <meta property="og:description" content="Benchmarking compositional language-grounded route planning over semantic maps.">
-  <meta property="og:image" content="figures/teaser.png">
+  <meta property="og:image" content="git_resources/figures/teaser.png">
   <title>Map2Route — Language-Grounded Route Planning</title>
   <style>
     :root {
@@ -520,6 +520,261 @@
     }
 
     .figure-panel .image-caption { padding-inline: 12px; }
+
+    .demo-section {
+      position: relative;
+      background:
+        radial-gradient(circle at 92% 8%, rgba(185, 221, 211, 0.72), transparent 24rem),
+        var(--paper-deep);
+      overflow: hidden;
+    }
+
+    .demo-section .container {
+      width: min(calc(100% - 40px), 1320px);
+    }
+
+    .demo-section .section-head { max-width: 850px; }
+
+    .demo-scene {
+      padding: clamp(22px, 3vw, 38px);
+      background: rgba(251, 250, 245, 0.74);
+      border: 1px solid rgba(23, 38, 37, 0.13);
+      border-radius: 30px;
+      box-shadow: 0 24px 60px rgba(22, 46, 43, 0.09);
+    }
+
+    .demo-scene + .demo-scene { margin-top: 30px; }
+
+    .demo-scene-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .demo-scene-head::-webkit-details-marker { display: none; }
+
+    .demo-scene-head:focus-visible {
+      outline: 3px solid rgba(21, 91, 89, 0.28);
+      outline-offset: 8px;
+      border-radius: 12px;
+    }
+
+    .demo-scene[open] .demo-scene-head {
+      margin-bottom: 26px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .demo-scene-label {
+      display: inline-block;
+      margin-bottom: 7px;
+      color: var(--coral);
+      font-size: 0.76rem;
+      font-weight: 850;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .demo-scene-head h3 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.45rem, 2.5vw, 2.1rem);
+      font-weight: 500;
+      letter-spacing: -0.035em;
+      line-height: 1.1;
+    }
+
+    .demo-scene-meta {
+      flex: none;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 750;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .demo-scene-meta .when-open { display: none; }
+    .demo-scene[open] .demo-scene-meta .when-closed { display: none; }
+    .demo-scene[open] .demo-scene-meta .when-open { display: inline; }
+
+    .demo-scene-actions {
+      flex: none;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .demo-scene-toggle {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: var(--forest);
+      border-radius: 50%;
+    }
+
+    .demo-scene-toggle svg {
+      width: 17px;
+      height: 17px;
+      transition: transform 180ms ease;
+    }
+
+    .demo-scene[open] .demo-scene-toggle svg { transform: rotate(180deg); }
+
+    .demo-carousel-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+
+    .demo-carousel-bar p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .demo-scroll-controls {
+      flex: none;
+      display: flex;
+      gap: 8px;
+    }
+
+    .demo-scroll-button {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 1px solid rgba(11, 59, 60, 0.18);
+      color: var(--forest);
+      background: var(--card);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+
+    .demo-scroll-button:hover {
+      color: white;
+      background: var(--forest);
+      transform: translateY(-2px);
+    }
+
+    .demo-scroll-button svg { width: 18px; height: 18px; }
+
+    .demo-grid {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      padding: 2px 2px 16px;
+      overflow-x: auto;
+      overscroll-behavior-inline: contain;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      scrollbar-color: rgba(11, 59, 60, 0.35) rgba(11, 59, 60, 0.08);
+      scrollbar-width: thin;
+    }
+
+    .demo-grid::-webkit-scrollbar { height: 8px; }
+    .demo-grid::-webkit-scrollbar-track { background: rgba(11, 59, 60, 0.08); border-radius: 999px; }
+    .demo-grid::-webkit-scrollbar-thumb { background: rgba(11, 59, 60, 0.35); border-radius: 999px; }
+
+    .demo-card {
+      flex: 0 0 clamp(250px, 24vw, 310px);
+      height: 600px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      scroll-snap-align: start;
+    }
+
+    .demo-visual {
+      padding: 12px;
+      background:
+        linear-gradient(145deg, rgba(11, 59, 60, 0.08), rgba(71, 125, 157, 0.08)),
+        #eef0e9;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .demo-visual .figure-button {
+      height: 320px;
+      background: rgba(255, 255, 255, 0.62);
+      border-radius: 12px;
+    }
+
+    .demo-visual .figure-button img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .demo-copy {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      min-height: 0;
+      padding: 18px;
+    }
+
+    .demo-episode {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .demo-episode strong {
+      color: var(--forest-2);
+      font-size: 0.79rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .demo-difficulty {
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .demo-difficulty.easy {
+      color: var(--forest-2);
+      background: var(--mint-light);
+    }
+
+    .demo-difficulty.hard {
+      color: #8d321e;
+      background: #f9ddd4;
+    }
+
+    .demo-instruction {
+      margin: 0;
+      padding-right: 6px;
+      overflow-y: auto;
+      color: #435552;
+      font-size: 0.87rem;
+      line-height: 1.55;
+      scrollbar-color: rgba(11, 59, 60, 0.25) transparent;
+      scrollbar-width: thin;
+    }
+
+    .demo-hint {
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-align: center;
+    }
 
     .method-section {
       color: #e9f4f1;
@@ -1131,6 +1386,11 @@
       .stat:first-child { padding-left: 18px; }
       .stat { padding: 24px 18px; }
       .task-card { min-height: auto; padding: 27px; }
+      .demo-scene-head { display: block; }
+      .demo-scene-actions { justify-content: space-between; margin-top: 14px; }
+      .demo-carousel-bar { align-items: flex-end; }
+      .demo-card { flex-basis: min(78vw, 290px); height: 560px; }
+      .demo-visual .figure-button { height: 290px; }
       .score-cards { grid-template-columns: 1fr; }
       .score-card { grid-template-columns: 78px 1fr; }
       .score-card.featured { transform: none; }
@@ -1169,6 +1429,7 @@
       </button>
       <ul class="nav-links" id="nav-links">
         <li><a href="#benchmark">Benchmark</a></li>
+        <li><a href="#examples">Examples</a></li>
         <li><a href="#method">Grounding2Route</a></li>
         <li><a href="#results">Results</a></li>
         <li><a href="#real-world">Real-world</a></li>
@@ -1198,8 +1459,8 @@
         </div>
 
         <figure class="teaser-wrap reveal">
-          <button class="figure-button" type="button" data-full="figures/teaser.png" aria-label="Enlarge Map2Route overview figure">
-            <img src="figures/teaser.png" alt="Overview of Map2Route showing a semantic map, compositional route instruction, generated route, and evaluation dimensions" fetchpriority="high">
+          <button class="figure-button" type="button" data-full="git_resources/figures/teaser.png" aria-label="Enlarge Map2Route overview figure">
+            <img src="git_resources/figures/teaser.png" alt="Overview of Map2Route showing a semantic map, compositional route instruction, generated route, and evaluation dimensions" fetchpriority="high">
           </button>
           <figcaption class="image-caption"><strong>Map2Route</strong> Compositional language-grounded and constraint-aware route planning over semantic maps.</figcaption>
         </figure>
@@ -1240,11 +1501,610 @@
         </div>
 
         <figure class="figure-panel reveal" style="margin-top: 34px;">
-          <button class="figure-button" type="button" data-full="figures/statistics.png" aria-label="Enlarge benchmark statistics figure">
-            <img src="figures/statistics.png" alt="Complexity statistics comparing Easy and Hard Map2Route episodes" loading="lazy">
+          <button class="figure-button" type="button" data-full="git_resources/figures/statistics.png" aria-label="Enlarge benchmark statistics figure">
+            <img src="git_resources/figures/statistics.png" alt="Complexity statistics comparing Easy and Hard Map2Route episodes" loading="lazy">
           </button>
           <figcaption class="image-caption"><strong>Benchmark complexity</strong> Hard episodes increase instruction length, room traversal, candidate ambiguity, reference depth, trajectory length, and constraint count.</figcaption>
         </figure>
+      </div>
+    </section>
+
+    <section class="demo-section" id="examples" aria-labelledby="examples-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Demo examples</p>
+          <p id="examples-title">Black trajectories are human demonstrations; colored trajectories are A* paths.</p>
+        </div>
+
+        <!--
+          To add a scene, duplicate this <details> block and update its scene ID,
+          instructions, and asset paths. Scenes are collapsed by default, and
+          cards are automatically ordered Hard first, then Easy.
+        -->
+        <details class="demo-scene reveal">
+          <summary class="demo-scene-head" aria-labelledby="demo-scene-108-title">
+            <div>
+              <h3 id="demo-scene-108-title">Scene 108</h3>
+            </div>
+            <span class="demo-scene-actions">
+              <span class="demo-scene-meta">
+                <span class="when-closed">Click to expand</span>
+                <span class="when-open">Click to collapse</span>
+              </span>
+              <span class="demo-scene-toggle" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </span>
+          </summary>
+
+          <div class="demo-carousel-bar">
+            <p>Hard examples first · Scroll horizontally to explore</p>
+            <div class="demo-scroll-controls" aria-label="Scroll Scene 108 examples">
+              <button class="demo-scroll-button" type="button" data-demo-scroll="-1" aria-label="Scroll examples left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <button class="demo-scroll-button" type="button" data-demo-scroll="1" aria-label="Scroll examples right">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="demo-grid" tabindex="0" aria-label="Scene 108 route examples">
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/108/instruction_000018_with_gt.png" aria-label="Enlarge Scene 108 Episode 018 route">
+                  <img src="git_resources/demo_examples/108/instruction_000018_with_gt.png" alt="Annotated route for Episode 018 in Scene 108" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 018</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">Next, you need to inspect three locations in order:<br><br>1. the area near the bed in a room that contains a desk with a laptop on it;<br>2. a surface—whether it is a dining table, dresser, desk, or countertop—that has a pan, a statue, and lettuce on it;<br>3. the small area between the dining table and its nearest window in the bedroom connected to the starting room.<br><br>On the way to the first destination, first make a counterclockwise patrol around the current room, and stop the patrol when you reach the doorway used to leave the room. While heading toward the unknown surface, keep away from the vase in the room containing the first destination. Finally, in the room containing the last destination, stay away from the dresser while remaining close to the TV.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/108/instruction_000019_with_gt.png" aria-label="Enlarge Scene 108 Episode 019 route">
+                  <img src="git_resources/demo_examples/108/instruction_000019_with_gt.png" alt="Annotated route for Episode 019 in Scene 108" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 019</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">Go to the sink in a room where the toilet has only a spray bottle and toilet paper on it. While still in the starting room, stay close to the bowl on the dining table. Then head to the small area between the countertop and the fridge. While in the kitchen, keep away from the egg inside the fridge. After that, proceed to a corner of a bathroom where the toilet has toilet paper, a soap bottle, a spray bottle, and a candle on it. The target corner is next to a plunger. While in this bathroom, stay close to the sink</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/108/instruction_000020_with_gt.png" aria-label="Enlarge Scene 108 Episode 020 route">
+                  <img src="git_resources/demo_examples/108/instruction_000020_with_gt.png" alt="Annotated route for Episode 020 in Scene 108" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 020</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">There is a houseplant placed next to a dresser somewhere in the scene. Go to that houseplant. While in the room containing the houseplant, keep away from the TV in the adjacent room. Then, starting from the kitchen where you are after reaching the houseplant, pass through rooms in the order kitchen → living room → bedroom, and finally enter a bathroom. Once inside the bathroom, head to the toilet paper. In this room, try to stay closer to the plunger than to the sink basin. Finally, you should now be at one corner of the map. Travel to another corner of the map where there is a sink, and keep away from the plunger near that sink.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/108/instruction_000002_with_gt.png" aria-label="Enlarge Scene 108 Episode 002 route">
+                  <img src="git_resources/demo_examples/108/instruction_000002_with_gt.png" alt="Annotated route for Episode 002 in Scene 108" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 002</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Head to the houseplant in the kitchen. When you are in the room immediately before entering the kitchen, stay closer to the dining table than to the desk.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/108/instruction_000004_with_gt.png" aria-label="Enlarge Scene 108 Episode 004 route">
+                  <img src="git_resources/demo_examples/108/instruction_000004_with_gt.png" alt="Annotated route for Episode 004 in Scene 108" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 004</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Go to the garbage can in the bathroom that is farthest from your current position. When you enter the kitchen, keep away from the dining table in the kitchen.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/108/instruction_000006_with_gt.png" aria-label="Enlarge Scene 108 Episode 006 route">
+                  <img src="git_resources/demo_examples/108/instruction_000006_with_gt.png" alt="Annotated route for Episode 006 in Scene 108" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 006</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Head to the garbage can in the smallest bathroom. In the room immediately before entering that bathroom, stay as close to the dresser as possible.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/108/instruction_000009_with_gt.png" aria-label="Enlarge Scene 108 Episode 009 route">
+                  <img src="git_resources/demo_examples/108/instruction_000009_with_gt.png" alt="Annotated route for Episode 009 in Scene 108" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 009</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">First, head to the desk that is closest to you in straight-line distance. Then proceed to the dining table in the living room. While you are in the room containing the desk, keep away from the dining table at all times.</p>
+              </div>
+            </article>
+          </div>
+
+          <p class="demo-hint">Use the arrows, trackpad, or horizontal scrollbar to browse. Click a route to enlarge it.</p>
+        </details>
+
+        <details class="demo-scene reveal">
+          <summary class="demo-scene-head" aria-labelledby="demo-scene-111-title">
+            <div>
+              <h3 id="demo-scene-111-title">Scene 111</h3>
+            </div>
+            <span class="demo-scene-actions">
+              <span class="demo-scene-meta">
+                <span class="when-closed">Click to expand</span>
+                <span class="when-open">Click to collapse</span>
+              </span>
+              <span class="demo-scene-toggle" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </span>
+          </summary>
+
+          <div class="demo-carousel-bar">
+            <p>Hard examples first · Scroll horizontally to explore</p>
+            <div class="demo-scroll-controls" aria-label="Scroll Scene 111 examples">
+              <button class="demo-scroll-button" type="button" data-demo-scroll="-1" aria-label="Scroll examples left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <button class="demo-scroll-button" type="button" data-demo-scroll="1" aria-label="Scroll examples right">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="demo-grid" tabindex="0" aria-label="Scene 111 route examples">
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/111/instruction_000018_with_gt.png" aria-label="Enlarge Scene 111 Episode 018 route">
+                  <img src="git_resources/demo_examples/111/instruction_000018_with_gt.png" alt="Annotated route for Episode 018 in Scene 111" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 018</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">Go to the TV stand next to the sofa. Then head to the basketball underneath the dresser. On the way to the second destination, do not pass between the vacuum cleaner and the basketball in the same room.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/111/instruction_000019_with_gt.png" aria-label="Enlarge Scene 111 Episode 019 route">
+                  <img src="git_resources/demo_examples/111/instruction_000019_with_gt.png" alt="Annotated route for Episode 019 in Scene 111" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 019</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">First, head to the houseplant on the countertop. While you are still in the starting room, keep away from the remote control. Then go to the bedroom that contains a dog bed and enter the small area that is almost enclosed by a baseball bat. When you enter this target room, try to stay close to the chair nearest to the bowl. This room is adjacent to three bathrooms; enter the bathroom whose doorway is farthest from your current position in terms of travel distance, and head to the garbage can inside it. Whenever you pass through the room containing the vacuum cleaner, do not go between the vacuum cleaner and the basketball, and do not pass between the baseball bat and the bed.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/111/instruction_000020_with_gt.png" aria-label="Enlarge Scene 111 Episode 020 route">
+                  <img src="git_resources/demo_examples/111/instruction_000020_with_gt.png" alt="Annotated route for Episode 020 in Scene 111" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 020</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">Go to the chair in a room that contains two stools. The target chair is very close to a cup and is also near a knife. After reaching the chair, proceed to a bathroom where a garbage can and a plunger are located between the sink and the toilet, and head to the toilet in that bathroom. At this point, first circle the dining table beside you once counterclockwise. Then go to another toilet, located in a room where only a plunger lies between the toilet and the sink. On the way to this third destination, when you enter a room containing a dog bed, stay close to the baseball bat in that room. After leaving this bedroom and entering the next bedroom, stay close to the vase on the dining table in that bedroom.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/111/instruction_000002_with_gt.png" aria-label="Enlarge Scene 111 Episode 002 route">
+                  <img src="git_resources/demo_examples/111/instruction_000002_with_gt.png" alt="Annotated route for Episode 002 in Scene 111" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 002</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Go to the chair closest to the garbage bag. On the way there, do not pass between the vacuum cleaner and the dining table nearest to it. While in the room containing the vacuum cleaner, keep away from the houseplant.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/111/instruction_000004_with_gt.png" aria-label="Enlarge Scene 111 Episode 004 route">
+                  <img src="git_resources/demo_examples/111/instruction_000004_with_gt.png" alt="Annotated route for Episode 004 in Scene 111" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 004</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Go to a box that is not underneath a dining table. While in the current room, keep away from the houseplant.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/111/instruction_000008_with_gt.png" aria-label="Enlarge Scene 111 Episode 008 route">
+                  <img src="git_resources/demo_examples/111/instruction_000008_with_gt.png" alt="Annotated route for Episode 008 in Scene 111" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 008</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Head to the tissue box that is relatively far from your current position. Along the way, stay closer to the dog bed than to the desk beside it.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/111/instruction_000009_with_gt.png" aria-label="Enlarge Scene 111 Episode 009 route">
+                  <img src="git_resources/demo_examples/111/instruction_000009_with_gt.png" alt="Annotated route for Episode 009 in Scene 111" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 009</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Go to the garbage can that is farthest from your current position. In the room immediately before the room containing the garbage can, do not pass between the chair and the dog bed. In the room immediately before the room containing the dog bed, stay close to the bowl.</p>
+              </div>
+            </article>
+          </div>
+
+          <p class="demo-hint">Use the arrows, trackpad, or horizontal scrollbar to browse. Click a route to enlarge it.</p>
+        </details>
+
+        <details class="demo-scene reveal">
+          <summary class="demo-scene-head" aria-labelledby="demo-scene-114-title">
+            <div>
+              <h3 id="demo-scene-114-title">Scene 114</h3>
+            </div>
+            <span class="demo-scene-actions">
+              <span class="demo-scene-meta">
+                <span class="when-closed">Click to expand</span>
+                <span class="when-open">Click to collapse</span>
+              </span>
+              <span class="demo-scene-toggle" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </span>
+          </summary>
+
+          <div class="demo-carousel-bar">
+            <p>Hard examples first · Scroll horizontally to explore</p>
+            <div class="demo-scroll-controls" aria-label="Scroll Scene 114 examples">
+              <button class="demo-scroll-button" type="button" data-demo-scroll="-1" aria-label="Scroll examples left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <button class="demo-scroll-button" type="button" data-demo-scroll="1" aria-label="Scroll examples right">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="demo-grid" tabindex="0" aria-label="Scene 114 route examples">
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/114/instruction_000018_with_gt.png" aria-label="Enlarge Scene 114 Episode 018 route">
+                  <img src="git_resources/demo_examples/114/instruction_000018_with_gt.png" alt="Annotated route for Episode 018 in Scene 114" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 018</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">First, make your way to the room that contains the greatest combined number of tennis rackets and pillows. In this room, there are three boxes: one with nothing around it, one underneath the TV, and one beside the window. Go to the box next to the window. As you leave your starting room, stay close to the remote control there.<br><br>Next, head to the small area near the countertop in the kitchen, where there is a window looking outside. On the way, keep your distance from the stool.<br><br>Finally, proceed to the toilet that is farthest from the garbage can in the same room. In the room you pass through immediately before entering the toilet's room, do not go between the side table and the dining table.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/114/instruction_000019_with_gt.png" aria-label="Enlarge Scene 114 Episode 019 route">
+                  <img src="git_resources/demo_examples/114/instruction_000019_with_gt.png" alt="Annotated route for Episode 019 in Scene 114" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 019</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">Next, you need to visit three locations in order:<br><br>1. Go to the area between a floor lamp and the bed closest to that floor lamp. Make sure that when you are facing the nearby dining table, the floor lamp is on one side of you and the bed is on the other.<br>2. Proceed to the doorway in the kitchen.<br>3. Head to the dresser in the bedroom containing the largest number of boxes.<br><br>There are no special requirements on your way to the first destination. While heading toward the second destination, stay close to the cart, and do not pass through the space between the dish sponge in the kitchen and the pen on the dining table. Finally, when you enter the bedroom containing the last destination, keep your distance from the box that is second closest to the dresser.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/114/instruction_000020_with_gt.png" aria-label="Enlarge Scene 114 Episode 020 route">
+                  <img src="git_resources/demo_examples/114/instruction_000020_with_gt.png" alt="Annotated route for Episode 020 in Scene 114" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 020</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">There is a room with a window positioned between a bed and a TV stand. Go to the window in this room that is closest to the dresser. Along the way, once you enter the first bedroom, never pass between the bed and the dining table in that bedroom. You should also stay close to the basketball you encounter in the room with a floor lamp.<br><br>Next, in the kitchen, find the chair that is closest to the center point of all the potatoes and make your way to it. On the way there, keep your distance from any side table that has either a key chain or a statue on it.<br><br>Finally, head to a corner of the largest bathroom. One corner contains a toilet, and another contains a garbage can. Of the two remaining corners, go to the one farthest from the doorway through which you enter the bathroom.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/114/instruction_000001_with_gt.png" aria-label="Enlarge Scene 114 Episode 001 route">
+                  <img src="git_resources/demo_examples/114/instruction_000001_with_gt.png" alt="Annotated route for Episode 001 in Scene 114" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 001</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Head to the bed with a teddy bear on it. Along the way, keep away from the bed in the starting room.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/114/instruction_000002_with_gt.png" aria-label="Enlarge Scene 114 Episode 002 route">
+                  <img src="git_resources/demo_examples/114/instruction_000002_with_gt.png" alt="Annotated route for Episode 002 in Scene 114" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 002</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Head to the nearest chair while keeping away from all side tables.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/114/instruction_000010_with_gt.png" aria-label="Enlarge Scene 114 Episode 010 route">
+                  <img src="git_resources/demo_examples/114/instruction_000010_with_gt.png" alt="Annotated route for Episode 010 in Scene 114" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 010</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Go to the toilet in a bathroom that can only be reached by passing through a living room. Along the way, stay as far away from the sofa as possible.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/114/instruction_000012_with_gt.png" aria-label="Enlarge Scene 114 Episode 012 route">
+                  <img src="git_resources/demo_examples/114/instruction_000012_with_gt.png" alt="Annotated route for Episode 012 in Scene 114" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 012</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Head to the window next to the fridge. Along the way, stay closer to the countertop than to the pot</p>
+              </div>
+            </article>
+          </div>
+
+          <p class="demo-hint">Use the arrows, trackpad, or horizontal scrollbar to browse. Click a route to enlarge it.</p>
+        </details>
+
+        <details class="demo-scene reveal">
+          <summary class="demo-scene-head" aria-labelledby="demo-scene-117-title">
+            <div>
+              <h3 id="demo-scene-117-title">Scene 117</h3>
+            </div>
+            <span class="demo-scene-actions">
+              <span class="demo-scene-meta">
+                <span class="when-closed">Click to expand</span>
+                <span class="when-open">Click to collapse</span>
+              </span>
+              <span class="demo-scene-toggle" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </span>
+          </summary>
+
+          <div class="demo-carousel-bar">
+            <p>Hard examples first · Scroll horizontally to explore</p>
+            <div class="demo-scroll-controls" aria-label="Scroll Scene 117 examples">
+              <button class="demo-scroll-button" type="button" data-demo-scroll="-1" aria-label="Scroll examples left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <button class="demo-scroll-button" type="button" data-demo-scroll="1" aria-label="Scroll examples right">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="demo-grid" tabindex="0" aria-label="Scene 117 route examples">
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/117/instruction_000019_with_gt.png" aria-label="Enlarge Scene 117 Episode 019 route">
+                  <img src="git_resources/demo_examples/117/instruction_000019_with_gt.png" alt="Annotated route for Episode 019 in Scene 117" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 019</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">There is a large connected area consisting of two living rooms and a kitchen. First, go to the dining table in the living room that does not contain any boxes. Along the way, if you come across a shelf inside a TV stand, keep your distance from it.<br><br>Next, head to the TV in the other of the two living rooms mentioned above. While making your way there, stay closer to paper towel roll.<br><br>Finally, proceed to a box in a bedroom that is adjacent only to two bathrooms and one other bedroom. Once you are in the target bedroom, keep your distance from the remote control.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/117/instruction_000020_with_gt.png" aria-label="Enlarge Scene 117 Episode 020 route">
+                  <img src="git_resources/demo_examples/117/instruction_000020_with_gt.png" alt="Annotated route for Episode 020 in Scene 117" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 020</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">Next, you need to visit three locations in order:<br><br>1. Go to the TV stand that has two remote controls and a plate on it.<br>2. Proceed to the sink closest to the washing machine.<br>3. Head to the chair that is not placed against a wall in a room containing both a sofa and a houseplant.<br><br>There are also several constraints to follow. While heading to the first destination, stay close to the garbage can. Then, on your way to the sink, when you reach the room that connects two bedrooms through doorways, circle counterclockwise once around the object located in the middle of that room.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/117/instruction_000021_with_gt.png" aria-label="Enlarge Scene 117 Episode 021 route">
+                  <img src="git_resources/demo_examples/117/instruction_000021_with_gt.png" alt="Annotated route for Episode 021 in Scene 117" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 021</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">Leave your current room and pass through three different bedrooms in sequence, then enter a bathroom and go to the plunger. Each room in this sequence must be a new room, so you are not allowed to backtrack.<br><br>Next, make your way to the center point of the candles in the living room. On the way there, when you enter the bedroom that leads to a living room, keep your distance from the houseplant on the dresser.<br><br>Finally, head to the box in the bedroom. While you are in your current living room, stay closer to the remote control on the sofa than to the remote control on the dining table. When you enter the living room with a dog bed, follow the wall around the room until you reach the doorway you will use to leave. Take the side along the wall that does not pass by the dresser.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/117/instruction_000001_with_gt.png" aria-label="Enlarge Scene 117 Episode 001 route">
+                  <img src="git_resources/demo_examples/117/instruction_000001_with_gt.png" alt="Annotated route for Episode 001 in Scene 117" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 001</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Head to the armchair in the living room. While passing through the kitchen, stay close to the garbage can.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/117/instruction_000005_with_gt.png" aria-label="Enlarge Scene 117 Episode 005 route">
+                  <img src="git_resources/demo_examples/117/instruction_000005_with_gt.png" alt="Annotated route for Episode 005 in Scene 117" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 005</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Go to the sofa that has only one remote control on it. While in the starting room, do not pass between the basketball and the doorway that leads to the bedroom with two windows. In the room containing the target sofa, stay close to the shelf.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/117/instruction_000008_with_gt.png" aria-label="Enlarge Scene 117 Episode 008 route">
+                  <img src="git_resources/demo_examples/117/instruction_000008_with_gt.png" alt="Annotated route for Episode 008 in Scene 117" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 008</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Head to the bed in the room that has two windows. During the way to there, stay close to all the dressers.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/117/instruction_000015_with_gt.png" aria-label="Enlarge Scene 117 Episode 015 route">
+                  <img src="git_resources/demo_examples/117/instruction_000015_with_gt.png" alt="Annotated route for Episode 015 in Scene 117" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 015</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Head to the dining table that is closest to being square-shaped. You are currently standing at a doorway that leads to both a bathroom and a bedroom. First, enter the nearby bathroom and make one clockwise patrol around it. Then go into the bedroom, move counterclockwise toward another doorway, and continue on to the destination.</p>
+              </div>
+            </article>
+          </div>
+
+          <p class="demo-hint">Use the arrows, trackpad, or horizontal scrollbar to browse. Click a route to enlarge it.</p>
+        </details>
+
+        <details class="demo-scene reveal">
+          <summary class="demo-scene-head" aria-labelledby="demo-scene-120-title">
+            <div>
+              <h3 id="demo-scene-120-title">Scene 120</h3>
+            </div>
+            <span class="demo-scene-actions">
+              <span class="demo-scene-meta">
+                <span class="when-closed">Click to expand</span>
+                <span class="when-open">Click to collapse</span>
+              </span>
+              <span class="demo-scene-toggle" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </span>
+          </summary>
+
+          <div class="demo-carousel-bar">
+            <p>Hard examples first · Scroll horizontally to explore</p>
+            <div class="demo-scroll-controls" aria-label="Scroll Scene 120 examples">
+              <button class="demo-scroll-button" type="button" data-demo-scroll="-1" aria-label="Scroll examples left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <button class="demo-scroll-button" type="button" data-demo-scroll="1" aria-label="Scroll examples right">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="demo-grid" tabindex="0" aria-label="Scene 120 route examples">
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/120/instruction_000001_with_gt.png" aria-label="Enlarge Scene 120 Episode 001 route">
+                  <img src="git_resources/demo_examples/120/instruction_000001_with_gt.png" alt="Annotated route for Episode 001 in Scene 120" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 001</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Head to the sink in the bathroom that contains a clothes dryer. When you enter the next living room, stay close to the TV stand.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/120/instruction_000002_with_gt.png" aria-label="Enlarge Scene 120 Episode 002 route">
+                  <img src="git_resources/demo_examples/120/instruction_000002_with_gt.png" alt="Annotated route for Episode 002 in Scene 120" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 002</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Head to the dresser in the bedroom that has two windows. Keep away from the TV stand that is farthest from your current position.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/120/instruction_000005_with_gt.png" aria-label="Enlarge Scene 120 Episode 005 route">
+                  <img src="git_resources/demo_examples/120/instruction_000005_with_gt.png" alt="Annotated route for Episode 005 in Scene 120" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 005</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Visit all the baseball bats in order from nearest to farthest. While in the room that contains a dog bed, keep away from the garbage can.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/120/instruction_000007_with_gt.png" aria-label="Enlarge Scene 120 Episode 007 route">
+                  <img src="git_resources/demo_examples/120/instruction_000007_with_gt.png" alt="Annotated route for Episode 007 in Scene 120" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 007</strong><span class="demo-difficulty easy">Easy</span></div>
+                <p class="demo-instruction">Go to the dining table that has a baseball bat nearby. Stay close to the window near the fridge.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/120/instruction_000017_with_gt.png" aria-label="Enlarge Scene 120 Episode 017 route">
+                  <img src="git_resources/demo_examples/120/instruction_000017_with_gt.png" alt="Annotated route for Episode 017 in Scene 120" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 017</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">There are two windows positioned very close to each other. First, go to the houseplant near these two windows. Then head to the window beside the fridge. On your way to that window, do not pass between the fridge and the dining table.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/120/instruction_000018_with_gt.png" aria-label="Enlarge Scene 120 Episode 018 route">
+                  <img src="git_resources/demo_examples/120/instruction_000018_with_gt.png" alt="Annotated route for Episode 018 in Scene 120" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 018</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">Go to the sink in the room with the clothes dryer. On the way to the sink, stay close to the TV placed on the TV stand.<br><br>Next, in the room where a baseball bat is beside a desk, find the houseplant positioned next to two windows and head toward it. Along the way, you will also encounter another houseplant in a bedroom; keep your distance from that one.<br><br>Finally, make your way to the toilet in the bathroom adjacent to the kitchen. In the large open area formed by the kitchen and the living room, do not pass between the two dining tables. Also, do not go through the space between the TV stand and the dining table in the living room.</p>
+              </div>
+            </article>
+
+            <article class="demo-card">
+              <div class="demo-visual">
+                <button class="figure-button" type="button" data-full="git_resources/demo_examples/120/instruction_000019_with_gt.png" aria-label="Enlarge Scene 120 Episode 019 route">
+                  <img src="git_resources/demo_examples/120/instruction_000019_with_gt.png" alt="Annotated route for Episode 019 in Scene 120" loading="lazy">
+                </button>
+              </div>
+              <div class="demo-copy">
+                <div class="demo-episode"><strong>Episode 019</strong><span class="demo-difficulty hard">Hard</span></div>
+                <p class="demo-instruction">First, make your way to the window in the bedroom farthest from your starting position. This window should also be the one farthest from the bed in that bedroom. Along the way, when you enter the large open area formed by the living room and the kitchen, do not pass between the countertop and the sofa, and do not go through the space between the dining table and the TV stand in the living room.<br><br>Next, head to the houseplant in a bedroom that is second closest to your starting position. In the target room, enter the small area enclosed by the baseball bat, the desk, and the bed, and inspect that space. After leaving this area, keep your distance from the laptop.<br><br>Finally, proceed to the toilet closest to your first destination, the window.</p>
+              </div>
+            </article>
+          </div>
+
+          <p class="demo-hint">Use the arrows, trackpad, or horizontal scrollbar to browse. Click a route to enlarge it.</p>
+        </details>
       </div>
     </section>
 
@@ -1271,8 +2131,8 @@
             </div>
           </div>
           <figure class="method-figure reveal">
-            <button class="figure-button" type="button" data-full="figures/Grounding2Route.png" aria-label="Enlarge Grounding2Route pipeline figure">
-              <img src="figures/Grounding2Route.png" alt="Grounding2Route pipeline from code-as-grounding through RouteIR verification to deterministic scope-aware planning" loading="lazy">
+            <button class="figure-button" type="button" data-full="git_resources/figures/Grounding2Route.png" aria-label="Enlarge Grounding2Route pipeline figure">
+              <img src="git_resources/figures/Grounding2Route.png" alt="Grounding2Route pipeline from code-as-grounding through RouteIR verification to deterministic scope-aware planning" loading="lazy">
             </button>
             <figcaption class="image-caption"><strong>Pipeline</strong> A clean interface between flexible semantic grounding and deterministic geometric planning.</figcaption>
           </figure>
@@ -1289,8 +2149,8 @@
         </div>
 
         <figure class="result-table-panel reveal">
-          <button class="figure-button" type="button" data-full="figures/main_result.png" aria-label="Enlarge main Map2Route results table">
-            <img src="figures/main_result.png" alt="Main Map2Route results comparing Grounding2Route with seven adapted baselines, shortest feasible A-star, and human demonstrations on Easy and Hard episodes" loading="lazy">
+          <button class="figure-button" type="button" data-full="git_resources/figures/main_result.png" aria-label="Enlarge main Map2Route results table">
+            <img src="git_resources/figures/main_result.png" alt="Main Map2Route results comparing Grounding2Route with seven adapted baselines, shortest feasible A-star, and human demonstrations on Easy and Hard episodes" loading="lazy">
           </button>
           <figcaption class="image-caption"><strong>Table II · Main results</strong> Performance across hard-constraint satisfaction, five soft-preference metrics, and path efficiency. Click to enlarge.</figcaption>
         </figure>
@@ -1320,8 +2180,8 @@
           </div>
 
           <figure class="result-table-panel reveal">
-            <button class="figure-button" type="button" data-full="figures/ablation_study.png" aria-label="Enlarge Grounding2Route ablation study table">
-              <img src="figures/ablation_study.png" alt="Grounding2Route ablation study comparing grounding strategies, RouteIR and LTL, repair rounds, and soft-constraint scope variants" loading="lazy">
+            <button class="figure-button" type="button" data-full="git_resources/figures/ablation_study.png" aria-label="Enlarge Grounding2Route ablation study table">
+              <img src="git_resources/figures/ablation_study.png" alt="Grounding2Route ablation study comparing grounding strategies, RouteIR and LTL, repair rounds, and soft-constraint scope variants" loading="lazy">
             </button>
             <figcaption class="image-caption"><strong>Table III · Ablation</strong> Each row changes one Grounding2Route component while holding the remaining configuration fixed. Click to enlarge.</figcaption>
           </figure>
@@ -1341,8 +2201,8 @@
 
           <div class="analysis-grid">
             <figure class="figure-panel reveal">
-              <button class="figure-button" type="button" data-full="figures/difficulty_analysis.png" aria-label="Enlarge benchmark difficulty analysis figure">
-                <img src="figures/difficulty_analysis.png" alt="Mean HCS of Grounding2Route and OSG-LLM as reference depth, candidate instances, and hard constraints increase" loading="lazy">
+              <button class="figure-button" type="button" data-full="git_resources/figures/difficulty_analysis.png" aria-label="Enlarge benchmark difficulty analysis figure">
+                <img src="git_resources/figures/difficulty_analysis.png" alt="Mean HCS of Grounding2Route and OSG-LLM as reference depth, candidate instances, and hard constraints increase" loading="lazy">
               </button>
               <figcaption class="image-caption"><strong>Difficulty analysis</strong> Performance declines as reference depth, instance ambiguity, and hard-constraint count increase. Click to enlarge.</figcaption>
             </figure>
@@ -1371,8 +2231,8 @@
         </div>
 
         <figure class="real-figure reveal">
-          <button class="figure-button" type="button" data-full="figures/realexp.png" aria-label="Enlarge real-world experiments figure">
-            <img src="figures/realexp.png" alt="Qualitative real-world Grounding2Route experiments with indoor scenes, semantic maps, and executed trajectories" loading="lazy">
+          <button class="figure-button" type="button" data-full="git_resources/figures/realexp.png" aria-label="Enlarge real-world experiments figure">
+            <img src="git_resources/figures/realexp.png" alt="Qualitative real-world Grounding2Route experiments with indoor scenes, semantic maps, and executed trajectories" loading="lazy">
           </button>
           <figcaption class="image-caption"><strong>48 episodes · 8 scenes</strong> Grounding2Route executes multi-stage instructions with scoped far preferences and must-avoid requirements in real indoor environments.</figcaption>
         </figure>
@@ -1422,9 +2282,9 @@
     </div>
   </footer>
 
-  <dialog id="image-dialog" aria-label="Enlarged research figure">
+  <dialog id="image-dialog" aria-label="Enlarged route or research figure">
     <button class="dialog-close" type="button" aria-label="Close image">×</button>
-    <img id="dialog-image" src="" alt="">
+    <img id="dialog-image" alt="">
   </dialog>
 
   <script>
@@ -1449,6 +2309,30 @@
         navLinks.classList.remove('open');
         menuButton.setAttribute('aria-expanded', 'false');
       }
+    });
+
+    const demoScenes = [...document.querySelectorAll('.demo-scene')];
+    demoScenes.forEach((scene) => {
+      const carousel = scene.querySelector('.demo-grid');
+      const cards = [...carousel.querySelectorAll('.demo-card')];
+      cards
+        .sort((a, b) => Number(Boolean(b.querySelector('.demo-difficulty.hard'))) - Number(Boolean(a.querySelector('.demo-difficulty.hard'))))
+        .forEach((card) => carousel.append(card));
+
+      scene.addEventListener('toggle', () => {
+        if (!scene.open) return;
+        demoScenes.forEach((otherScene) => {
+          if (otherScene !== scene) otherScene.removeAttribute('open');
+        });
+      });
+
+      scene.querySelectorAll('[data-demo-scroll]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const direction = Number(button.dataset.demoScroll);
+          const distance = Math.min(carousel.clientWidth * 0.82, 680);
+          carousel.scrollBy({ left: direction * distance, behavior: 'smooth' });
+        });
+      });
     });
 
     document.querySelectorAll('[data-full]').forEach((button) => {

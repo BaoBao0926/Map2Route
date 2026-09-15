@@ -2,7 +2,7 @@
 
 [**Paper**](./Map2Route.pdf) | [**Anonymous Github Repo**](https://anonymous.4open.science/r/Map2Route-F05F/README.md) | [**Anonymous Project Page**](https://anonymous.4open.science/w/Map2Route-F05F/)
 
-![Map2Route overview](figures/teaser.png)
+![Map2Route overview](git_resources/figures/teaser.png)
 
 <!-- ## Overview
 
@@ -20,9 +20,9 @@ Map2Route evaluates three complementary dimensions:
 
 Grounding2Route is a structured language-to-route framework that separates compositional semantic grounding from geometric planning. It uses executable code-as-grounding to produce a Route Semantic Intermediate Representation (RouteIR), applies verification-guided repair, and deterministically compiles the verified specification into a route with scope-aware sequential planning.
 
-![Grounding2Route pipeline](figures/Grounding2Route.png)
+![Grounding2Route pipeline](git_resources/figures/Grounding2Route.png)
 
-> **Implementation note:** Commands and output directories retain the internal `groundplan` slug for backward compatibility; the method name used in the paper and documentation is **Grounding2Route**.
+The implementation, commands, and output directories consistently use the `grounding2route` slug.
 
 ## Main Results
 
@@ -31,6 +31,8 @@ Across seven adapted representative baselines, Grounding2Route achieves **0.667/
  -->
 
 # 1. Map2Route
+
+You can either download the ready-to-use benchmark in Section 1.1 or follow Sections 1.2–1.4 to build it manually.
 
 ## 1.1 Download the Benchmark
 
@@ -304,13 +306,13 @@ python scripts/methods/lang2ltlv2/run.py \
     </tr>
     <tr>
       <td>Grounding2Route</td>
-      <td><pre><code class="language-bash">python scripts/methods/groundplan/run.py \
+      <td><pre><code class="language-bash">python scripts/methods/grounding2route/run.py \
   --set valunseen \
   --grounding-representation code \
   --workers 4 \
   --overwrite \
   --verbose</code></pre></td>
-      <td><a href="./scripts/methods/groundplan/README.md">README.md</a></td>
+      <td><a href="./scripts/methods/grounding2route/README.md">README.md</a></td>
     </tr>
   </tbody>
 </table>
@@ -329,7 +331,7 @@ python scripts/evaluation/recompute_method_metrics.py \
   --method OSGLLM \
   --method SayPlan \
   --method tutorial \
-  --method groundplan \
+  --method grounding2route \
   --human-expert \
   --workers 1
 ```
@@ -342,7 +344,7 @@ python scripts/evaluation/recompute_method_metrics.py \
 
 - **Human-expert metrics:** `--human-expert` evaluates the `human_expert_trajectory` stored in each instruction and updates `resources/methods/baselines/human_solver/human_expert_summary.json`. It uses an independent canonical reference for Path-Shape and makes no LLM calls. In this recomputation script, `--workers` controls only human-expert evaluation; saved method predictions are processed sequentially.
 
-- **Resume and checkpoints:** Metric recomputation resumes by default. Successfully processed method episodes receive individual checkpoints, while human-expert evaluation uses an episode-level metric cache. Re-running an interrupted command skips unchanged records and reports `reason=resume_checkpoint_match` or `reason=resume_cache_match`. Checkpoints are stored under `resources/methods/groundplan/previous/diagnostics/_metric_recompute/<evaluator-id>/` and are ignored by normal method runners. Progress is written to `summary.partial.json`; the final `summary.json` is replaced only after a method finishes. Evaluator code changes create a new evaluator ID. Use `--no-resume` to force a complete recomputation or `--run-id NAME` to label a metric-migration run.
+- **Resume and checkpoints:** Metric recomputation resumes by default. Successfully processed method episodes receive individual checkpoints, while human-expert evaluation uses an episode-level metric cache. Re-running an interrupted command skips unchanged records and reports `reason=resume_checkpoint_match` or `reason=resume_cache_match`. Checkpoints are stored under `resources/methods/grounding2route/previous/diagnostics/_metric_recompute/<evaluator-id>/` and are ignored by normal method runners. Progress is written to `summary.partial.json`; the final `summary.json` is replaced only after a method finishes. Evaluator code changes create a new evaluator ID. Use `--no-resume` to force a complete recomputation or `--run-id NAME` to label a metric-migration run.
 
 - **Evaluation failures:** By default, an exception from the shared evaluator does not remove the episode from aggregate statistics. The script records the original exception, assigns worst-case metrics, and stores the event in the checkpoint `fallbacks` field. Worst-case values set HCS and H-SPL to `0`, use the maximum grounded-region distance for Near, and set the raw Far, Relative, Path-Shape, and Clearance values to `0`. Use `--fail-fast` during evaluator debugging to stop at the first exception without generating a fallback.
 
@@ -366,35 +368,35 @@ All representation ablations use the same `valunseen` split, planner, evaluator,
 
 ```bash
 # 1. Full Grounding2Route: Code-as-Grounding with verification-guided repair.
-python scripts/methods/groundplan/run.py --set valunseen --overwrite --verbose
+python scripts/methods/grounding2route/run.py --set valunseen --overwrite --verbose
 
 # 2. ToolCall: native calls to the Grounding2Route semantic APIs, without repair.
-python scripts/methods/groundplan/run.py \
+python scripts/methods/grounding2route/run.py \
   --set valunseen \
   --grounding-representation tool_call \
   --execution-repair off \
-  --output-root resources/methods/groundplan/ablation/01_grounding_strategy/tool_call \
+  --output-root resources/methods/grounding2route/ablation/01_grounding_strategy/tool_call \
   --overwrite --verbose
 
 # 3. Schema: one-shot JSON RouteIR prediction.
-python scripts/methods/groundplan/run.py \
+python scripts/methods/grounding2route/run.py \
   --set valunseen \
   --grounding-representation json \
-  --output-root resources/methods/groundplan/ablation/01_grounding_strategy/schema \
+  --output-root resources/methods/grounding2route/ablation/01_grounding_strategy/schema \
   --overwrite --verbose
 
 # 4. Direct ID: one-shot entity-ID prediction from the compact scene catalog.
-python scripts/methods/groundplan/run.py \
+python scripts/methods/grounding2route/run.py \
   --set valunseen \
   --grounding-representation direct_id \
-  --output-root resources/methods/groundplan/ablation/01_grounding_strategy/direct_id \
+  --output-root resources/methods/grounding2route/ablation/01_grounding_strategy/direct_id \
   --overwrite --verbose
 
 # 5. LTL: one-shot restricted-LTL prediction from the compact scene catalog.
-python scripts/methods/groundplan/run.py \
+python scripts/methods/grounding2route/run.py \
   --set valunseen \
   --grounding-representation ltl \
-  --output-root resources/methods/groundplan/ablation/02_intermediate_representation/ltl \
+  --output-root resources/methods/grounding2route/ablation/02_intermediate_representation/ltl \
   --overwrite --verbose
 ```
 
@@ -410,11 +412,11 @@ Run this only after the canonical Code-as-Grounding run above has produced its
 complete `.steps.json` attempt histories:
 
 ```bash
-python scripts/methods/groundplan/run.py \
+python scripts/methods/grounding2route/run.py \
   --set valunseen \
   --ablation \
-  --ablation-source-root resources/methods/groundplan/main_result \
-  --ablation-output-root resources/methods/groundplan/ablation \
+  --ablation-source-root resources/methods/grounding2route/main_result \
+  --ablation-output-root resources/methods/grounding2route/ablation \
   --workers 1
 ```
 
