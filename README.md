@@ -28,7 +28,6 @@ Grounding2Route is a structured language-to-route framework that separates compo
 
 Across seven adapted representative baselines, Grounding2Route achieves **0.667/0.375 HCS** and **0.53/0.29 SPL** on Easy/Hard episodes, while leading all baselines on all five soft-preference metrics. A substantial gap to human demonstrations remains. In 48 real-world episodes across eight indoor scenes, Grounding2Route achieves **72.22% HCS**.
 
-## News
 
 
 # 1. Map2Route
@@ -36,11 +35,11 @@ Across seven adapted representative baselines, Grounding2Route achieves **0.667/
 ## 1.1 Download the Benchmark
 
 All benchmark resources are available from the
-[Map2Route dataset on Hugging Face](https://huggingface.co/datasets/Muyiaaaa/RouteSemBench).
+[Map2Route dataset on Hugging Face](https://huggingface.co/datasets/Muyiaaaa/Map2Route).
 Run the following command from the project root to download the complete benchmark:
 
 ```bash
-hf download Muyiaaaa/RouteSemBench --repo-type dataset --include "resources/**" --local-dir .
+hf download Muyiaaaa/Map2Route --repo-type dataset --include "resources/**" --local-dir .
 ```
 
 This preserves the expected directory structure and places all downloaded maps,
