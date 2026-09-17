@@ -535,6 +535,83 @@
 
     .demo-section .section-head { max-width: 850px; }
 
+    .section-fold {
+      overflow: hidden;
+      background: rgba(251, 250, 245, 0.78);
+      border: 1px solid rgba(23, 38, 37, 0.14);
+      border-radius: 30px;
+      box-shadow: 0 24px 60px rgba(22, 46, 43, 0.09);
+    }
+
+    .section-fold-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      padding: clamp(25px, 3.2vw, 42px);
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .section-fold-summary::-webkit-details-marker { display: none; }
+
+    .section-fold-summary:focus-visible {
+      outline: 3px solid rgba(21, 91, 89, 0.28);
+      outline-offset: -8px;
+      border-radius: 30px;
+    }
+
+    .section-fold-heading .eyebrow { margin: 0 0 7px; }
+
+    .section-fold-heading h2,
+    .section-fold-heading h3 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.75rem, 3.4vw, 3rem);
+      font-weight: 500;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+    }
+
+    .section-fold-summary-copy {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .section-fold-toggle {
+      flex: none;
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: var(--forest);
+      border-radius: 50%;
+    }
+
+    .section-fold-toggle svg {
+      width: 20px;
+      height: 20px;
+      transition: transform 180ms ease;
+    }
+
+    .section-fold[open] > .section-fold-summary {
+      border-bottom: 1px solid rgba(23, 38, 37, 0.12);
+    }
+
+    .section-fold[open] > .section-fold-summary .section-fold-toggle svg {
+      transform: rotate(180deg);
+    }
+
+    .section-fold-body { padding: clamp(24px, 3.2vw, 42px); }
+
+    .section-fold-intro {
+      max-width: 820px;
+      margin: 0 0 30px;
+      color: var(--muted);
+    }
+
     .demo-scene {
       padding: clamp(22px, 3vw, 38px);
       background: rgba(251, 250, 245, 0.74);
@@ -1077,6 +1154,33 @@
 
     .real-world .container { position: relative; z-index: 1; }
 
+    .real-world .section-fold {
+      background: rgba(255, 255, 255, 0.035);
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow: none;
+    }
+
+    .real-world .section-fold-heading .eyebrow { color: var(--mint); }
+    .real-world .section-fold-heading h2,
+    .real-world .section-fold-heading h3 { color: white; }
+
+    .real-world .section-fold-summary-copy { color: rgba(255, 255, 255, 0.64); }
+
+    .real-world-fold { margin-top: 72px; }
+
+    .real-world .section-fold-toggle {
+      color: var(--forest);
+      background: var(--yellow);
+    }
+
+    .real-world .section-fold[open] > .section-fold-summary {
+      border-bottom-color: rgba(255, 255, 255, 0.13);
+    }
+
+    .real-world .section-fold-summary:focus-visible {
+      outline-color: rgba(216, 241, 165, 0.32);
+    }
+
     .real-section-head {
       max-width: 980px;
       margin-bottom: 42px;
@@ -1151,7 +1255,13 @@
 
     .real-result-summary > p { margin: 0; color: rgba(255, 255, 255, 0.68); }
 
-    .video-heading { margin: 72px 0 22px; }
+    .video-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 28px;
+      margin: 72px 0 22px;
+    }
 
     .video-heading h3 {
       margin: 0;
@@ -1162,37 +1272,259 @@
       letter-spacing: -0.04em;
     }
 
-    .video-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 22px;
+    .video-heading p {
+      max-width: 480px;
+      margin: 0 0 4px;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 0.92rem;
     }
 
-    .video-placeholder {
-      aspect-ratio: 16 / 9;
+    .real-video-scenes {
+      display: grid;
+      gap: 24px;
+    }
+
+    .real-video-scene {
+      min-width: 0;
+      padding: 22px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+    }
+
+    .real-video-scene-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .real-video-scene-head::-webkit-details-marker { display: none; }
+
+    .real-video-scene-head:focus-visible {
+      outline: 3px solid rgba(216, 241, 165, 0.25);
+      outline-offset: 8px;
+      border-radius: 12px;
+    }
+
+    .real-video-scene[open] .real-video-scene-head {
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .real-video-scene-title { display: block; }
+
+    .real-video-scene-title h4 {
+      margin: 0;
+      color: white;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+
+    .real-video-scene-toggle {
+      width: 40px;
+      height: 40px;
       display: grid;
       place-items: center;
-      min-height: 260px;
-      padding: 30px;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.045);
-      border: 1.5px dashed rgba(255, 255, 255, 0.28);
-      border-radius: 22px;
+      color: var(--forest);
+      background: var(--yellow);
+      border-radius: 50%;
     }
 
-    .video-placeholder-icon {
+    .real-video-scene-toggle svg {
+      width: 17px;
+      height: 17px;
+      transition: transform 180ms ease;
+    }
+
+    .real-video-scene[open] .real-video-scene-toggle svg { transform: rotate(180deg); }
+
+    .real-video-carousel-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .real-video-scene-actions { display: flex; gap: 8px; }
+
+    .scene-scroll-button {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 160ms ease, border-color 160ms ease;
+    }
+
+    .scene-scroll-button:hover,
+    .scene-scroll-button:focus-visible {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.34);
+    }
+
+    .scene-video-track {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(290px, 360px);
+      gap: 16px;
+      overflow-x: auto;
+      padding: 2px 2px 12px;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+      scrollbar-width: thin;
+    }
+
+    .video-card {
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 22px;
+      scroll-snap-align: start;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .video-card.exploration {
+      background: rgba(216, 241, 165, 0.08);
+      border-color: rgba(216, 241, 165, 0.34);
+    }
+
+    .video-card:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .video-card-button {
+      width: 100%;
+      padding: 0;
+      color: inherit;
+      text-align: left;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .video-card-visual {
+      position: relative;
+      display: block;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: #071f20;
+    }
+
+    .video-card-visual img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform 260ms ease, opacity 260ms ease;
+    }
+
+    .video-card-role {
+      position: absolute;
+      z-index: 2;
+      left: 12px;
+      top: 12px;
+      padding: 7px 10px;
+      color: #123f40;
+      background: rgba(216, 241, 165, 0.94);
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 850;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    }
+
+    .video-card-button:hover .video-card-visual img,
+    .video-card-button:focus-visible .video-card-visual img {
+      transform: scale(1.025);
+      opacity: 0.82;
+    }
+
+    .video-card-play {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       width: 62px;
       height: 62px;
       display: grid;
       place-items: center;
-      margin: 0 auto 18px;
       color: var(--forest);
       background: var(--yellow);
       border-radius: 50%;
       font-size: 1.15rem;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
     }
 
-    .video-placeholder h4 { margin: 0; color: white; font-size: 1.08rem; }
+    .video-placeholder-label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--mint);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .video-card-placeholder {
+      aspect-ratio: 16 / 9;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      border-style: dashed;
+      text-align: center;
+    }
+
+    .video-card-placeholder .video-card-play {
+      position: static;
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 16px;
+      transform: none;
+      color: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.09);
+      box-shadow: none;
+    }
+
+    .video-card-placeholder h5 {
+      margin: 0;
+      color: white;
+      font-size: 1rem;
+    }
+
+    .video-card-placeholder p {
+      margin: 7px 0 0;
+      color: rgba(255, 255, 255, 0.48);
+      font-size: 0.82rem;
+    }
+
+    .video-dialog {
+      width: min(94vw, 1120px);
+      padding: 0;
+      overflow: hidden;
+      color: white;
+      background: #071f20;
+    }
+
+    .video-dialog video {
+      width: 100%;
+      max-height: 76vh;
+      display: block;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      background: #000;
+    }
 
     .resources {
       background: var(--paper-deep);
@@ -1386,6 +1718,9 @@
       .stat:first-child { padding-left: 18px; }
       .stat { padding: 24px 18px; }
       .task-card { min-height: auto; padding: 27px; }
+      .section-fold-summary { padding: 22px; }
+      .section-fold-body { padding: 22px; }
+      .section-fold-toggle { width: 42px; height: 42px; }
       .demo-scene-head { display: block; }
       .demo-scene-actions { justify-content: space-between; margin-top: 14px; }
       .demo-carousel-bar { align-items: flex-end; }
@@ -1400,10 +1735,12 @@
       .delta-row { grid-template-columns: 1fr; }
       .analysis-note { padding: 28px; }
       .real-world { padding: 82px 0; }
+      .real-world-fold { margin-top: 54px; }
       .real-result-summary { grid-template-columns: 1fr; gap: 18px; }
       .video-heading { display: block; margin-top: 54px; }
-      .video-grid { grid-template-columns: 1fr; }
-      .video-placeholder { min-height: 220px; }
+      .video-heading p { margin-top: 10px; }
+      .real-video-scene { padding: 17px; }
+      .scene-video-track { grid-auto-columns: min(82vw, 320px); }
       .resource-grid { grid-template-columns: 1fr; }
       .resource-card { min-height: 210px; }
       .resource-icon { margin-bottom: 24px; }
@@ -1511,17 +1848,26 @@
 
     <section class="demo-section" id="examples" aria-labelledby="examples-title">
       <div class="container">
-        <div class="section-head reveal">
-          <p class="eyebrow">Demo examples</p>
-          <p id="examples-title">Black trajectories are human demonstrations; colored trajectories are A* paths.</p>
-        </div>
+        <details class="section-fold demo-section-fold reveal">
+          <summary class="section-fold-summary" aria-labelledby="examples-title">
+            <div class="section-fold-heading">
+              <p class="eyebrow">Demo examples</p>
+              <h2 id="examples-title">Benchmark routes by scene.</h2>
+            </div>
+            <span class="section-fold-toggle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </summary>
 
-        <!--
-          To add a scene, duplicate this <details> block and update its scene ID,
-          instructions, and asset paths. Scenes are collapsed by default, and
-          cards are automatically ordered Hard first, then Easy.
-        -->
-        <details class="demo-scene reveal">
+          <div class="section-fold-body">
+            <p class="section-fold-intro">Black trajectories are human demonstrations; colored trajectories are A* paths. Expand this section, then choose a scene.</p>
+
+            <!--
+              To add a scene, duplicate this <details> block and update its scene ID,
+              instructions, and asset paths. Scenes are collapsed by default, and
+              cards are automatically ordered Hard first, then Easy.
+            -->
+            <details class="demo-scene reveal">
           <summary class="demo-scene-head" aria-labelledby="demo-scene-108-title">
             <div>
               <h3 id="demo-scene-108-title">Scene 108</h3>
@@ -2104,6 +2450,8 @@
           </div>
 
           <p class="demo-hint">Use the arrows, trackpad, or horizontal scrollbar to browse. Click a route to enlarge it.</p>
+            </details>
+          </div>
         </details>
       </div>
     </section>
@@ -2237,24 +2585,24 @@
           <figcaption class="image-caption"><strong>48 episodes · 8 scenes</strong> Grounding2Route executes multi-stage instructions with scoped far preferences and must-avoid requirements in real indoor environments.</figcaption>
         </figure>
 
-        <div class="video-heading reveal">
-          <h3>Robot demonstrations</h3>
-        </div>
+        <details class="section-fold real-world-fold reveal">
+          <summary class="section-fold-summary" aria-labelledby="real-videos-title">
+            <div class="section-fold-heading">
+              <p class="eyebrow">Video gallery</p>
+              <h3 id="real-videos-title">Robot demonstrations</h3>
+              <p class="section-fold-summary-copy">The first video in every scene shows exploration and semantic-map construction, followed by task-execution episodes.</p>
+            </div>
+            <span class="section-fold-toggle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </summary>
 
-        <div class="video-grid reveal" aria-label="Reserved space for real-world robot videos">
-          <article class="video-placeholder">
-            <div>
-              <span class="video-placeholder-icon" aria-hidden="true">▶</span>
-              <h4>Robot demonstration 01</h4>
+          <div class="section-fold-body">
+            <div class="real-video-scenes" id="real-video-scenes" aria-label="Real-world robot demonstrations grouped by scene">
             </div>
-          </article>
-          <article class="video-placeholder">
-            <div>
-              <span class="video-placeholder-icon" aria-hidden="true">▶</span>
-              <h4>Robot demonstration 02</h4>
-            </div>
-          </article>
-        </div>
+            <noscript><p class="video-fallback">Enable JavaScript to browse the robot demonstrations.</p></noscript>
+          </div>
+        </details>
       </div>
     </section>
 
@@ -2287,12 +2635,223 @@
     <img id="dialog-image" alt="">
   </dialog>
 
+  <dialog class="video-dialog" id="video-dialog" aria-label="Robot demonstration video">
+    <button class="dialog-close" id="video-dialog-close" type="button" aria-label="Close video">×</button>
+    <video id="robot-video" controls playsinline preload="none"></video>
+  </dialog>
+
   <script>
     const header = document.getElementById('site-header');
     const menuButton = document.getElementById('menu-button');
     const navLinks = document.getElementById('nav-links');
     const dialog = document.getElementById('image-dialog');
     const dialogImage = document.getElementById('dialog-image');
+    const videoDialog = document.getElementById('video-dialog');
+    const robotVideo = document.getElementById('robot-video');
+
+    const releaseAssetBase = 'https://github.com/BaoBao0926/Map2Route/releases/download/real-experiments-v1';
+    const realScenes = [
+      {
+        number: 1,
+        exploration: { asset: '1_exploration.mp4', poster: 'git_resources/video_posters/scene01_exploration.webp' },
+        episodes: [
+          { number: 1, asset: '1_1.mp4', poster: 'git_resources/video_posters/scene01_episode01.webp' },
+          { number: 2, asset: '1_2.mp4', poster: 'git_resources/video_posters/scene01_episode02.webp' },
+          { number: 3, asset: '1_3.mp4', poster: 'git_resources/video_posters/scene01_episode03.webp' },
+          { number: 4, asset: '1_4.mp4', poster: 'git_resources/video_posters/scene01_episode04.webp' },
+          { number: 5, asset: '1_5.mp4', poster: 'git_resources/video_posters/scene01_episode05.webp' },
+          { number: 6, asset: '1_6.mp4', poster: 'git_resources/video_posters/scene01_episode06.webp' }
+        ]
+      },
+      {
+        number: 2,
+        exploration: { asset: '2_exploration.mp4', poster: 'git_resources/video_posters/scene02_exploration.webp' },
+        episodes: [
+          { number: 1, asset: '2_1.mp4', poster: 'git_resources/video_posters/scene02_episode01.webp' },
+          { number: 2, asset: '2_2.mp4', poster: 'git_resources/video_posters/scene02_episode02.webp' },
+          { number: 3, asset: '2_3.mp4', poster: 'git_resources/video_posters/scene02_episode03.webp' },
+          { number: 4, asset: '2_4.mp4', poster: 'git_resources/video_posters/scene02_episode04.webp' },
+          { number: 5, asset: '2_5.mp4', poster: 'git_resources/video_posters/scene02_episode05.webp' },
+          { number: 6, asset: '2_6.mp4', poster: 'git_resources/video_posters/scene02_episode06.webp' }
+        ]
+      },
+      {
+        number: 3,
+        exploration: { asset: '3_exploration.mp4', poster: 'git_resources/video_posters/scene03_exploration.webp' },
+        episodes: [
+          { number: 1, asset: '3_1.mp4', poster: 'git_resources/video_posters/scene03_episode01.webp' },
+          { number: 2, asset: '3_2.mp4', poster: 'git_resources/video_posters/scene03_episode02.webp' },
+          { number: 3, asset: '3_3.mp4', poster: 'git_resources/video_posters/scene03_episode03.webp' },
+          { number: 4, asset: '3_4.mp4', poster: 'git_resources/video_posters/scene03_episode04.webp' }
+        ]
+      },
+      {
+        number: 4,
+        exploration: { asset: '4_exploration.mp4', poster: 'git_resources/video_posters/scene04_exploration.webp' },
+        episodes: [
+          { number: 1, asset: '4_1.mp4', poster: 'git_resources/video_posters/scene04_episode01.webp' },
+          { number: 2, asset: '4_2.mp4', poster: 'git_resources/video_posters/scene04_episode02.webp' },
+          { number: 3, asset: '4_3.mp4', poster: 'git_resources/video_posters/scene04_episode03.webp' },
+          { number: 4, asset: '4_4.mp4', poster: 'git_resources/video_posters/scene04_episode04.webp' },
+          { number: 5, asset: '4_5.mp4', poster: 'git_resources/video_posters/scene04_episode05.webp' },
+          { number: 6, asset: '4_6.mp4', poster: 'git_resources/video_posters/scene04_episode06.webp' },
+          { number: 7, asset: '4_7.mp4', poster: 'git_resources/video_posters/scene04_episode07.webp' }
+        ]
+      },
+      {
+        number: 5,
+        exploration: { asset: '5_exploration.mp4', poster: 'git_resources/video_posters/scene05_exploration.webp' },
+        episodes: [
+          { number: 1, asset: '5_1.mp4', poster: 'git_resources/video_posters/scene05_episode01.webp' },
+          { number: 2, asset: '5_2.mp4', poster: 'git_resources/video_posters/scene05_episode02.webp' },
+          { number: 3, asset: '5_3.mp4', poster: 'git_resources/video_posters/scene05_episode03.webp' },
+          { number: 4, asset: '5_4.mp4', poster: 'git_resources/video_posters/scene05_episode04.webp' }
+        ]
+      },
+      {
+        number: 6,
+        exploration: { asset: '6_exploration.mp4', poster: 'git_resources/video_posters/scene06_exploration.webp' },
+        episodes: [
+          { number: 1, asset: '6_1.mp4', poster: 'git_resources/video_posters/scene06_episode01.webp' },
+          { number: 2, asset: '6_2.mp4', poster: 'git_resources/video_posters/scene06_episode02.webp' },
+          { number: 3, asset: '6_3.mp4', poster: 'git_resources/video_posters/scene06_episode03.webp' }
+        ]
+      },
+      {
+        number: 7,
+        exploration: { asset: '7_exploration.mp4', poster: 'git_resources/video_posters/scene07_exploration.webp' },
+        episodes: [
+          { number: 1, asset: '7_1.mp4', poster: 'git_resources/video_posters/scene07_episode01.webp' },
+          { number: 2, asset: '7_2.mp4', poster: 'git_resources/video_posters/scene07_episode02.webp' },
+          { number: 3, asset: '7_3.mp4', poster: 'git_resources/video_posters/scene07_episode03.webp' }
+        ]
+      },
+      {
+        number: 8,
+        exploration: { asset: '8_exploration.mp4', poster: 'git_resources/video_posters/scene08_exploration.webp' },
+        episodes: [
+          { number: 1, asset: '8_1.mp4', poster: 'git_resources/video_posters/scene08_episode01.webp' },
+          { number: 2, asset: '8_2.mp4', poster: 'git_resources/video_posters/scene08_episode02.webp' },
+          { number: 3, asset: '8_3.mp4', poster: 'git_resources/video_posters/scene08_episode03.webp' },
+          { number: 4, asset: '8_4.mp4', poster: 'git_resources/video_posters/scene08_episode04.webp' }
+        ]
+      }
+    ];
+
+    const realVideoScenes = document.getElementById('real-video-scenes');
+    const videoRegistry = new Map();
+    const padNumber = (number) => String(number).padStart(2, '0');
+
+    const renderVideoCard = (scene, video, kind) => {
+      const isExploration = kind === 'exploration';
+      const kindLabel = isExploration ? 'Exploration' : `Episode ${padNumber(video.number)}`;
+      const title = isExploration ? 'Scene exploration' : `Robot episode ${padNumber(video.number)}`;
+      const label = `Scene ${padNumber(scene.number)} · ${kindLabel}`;
+      const id = isExploration
+        ? `scene-${scene.number}-exploration`
+        : `scene-${scene.number}-episode-${video.number}`;
+
+      videoRegistry.set(id, {
+        poster: video.poster,
+        src: `${releaseAssetBase}/${encodeURIComponent(video.asset)}`
+      });
+
+      return `
+        <article class="video-card${isExploration ? ' exploration' : ''}">
+          <button class="video-card-button" type="button" data-video-id="${id}" aria-label="Play ${label}: ${title}">
+            <span class="video-card-visual">
+              <img src="${video.poster}" alt="${label} preview" loading="lazy">
+              ${isExploration ? '<span class="video-card-role">Exploration · Map construction</span>' : ''}
+              <span class="video-card-play" aria-hidden="true">▶</span>
+            </span>
+          </button>
+        </article>
+      `;
+    };
+
+    const renderExplorationPlaceholder = (sceneNumber) => `
+      <article class="video-card video-card-placeholder exploration" aria-label="Scene ${padNumber(sceneNumber)} exploration video pending">
+        <div>
+          <span class="video-card-play" aria-hidden="true">＋</span>
+          <span class="video-placeholder-label">Exploration · Map construction</span>
+          <h5>Video pending</h5>
+        </div>
+      </article>
+    `;
+
+    realVideoScenes.innerHTML = realScenes.map((scene) => {
+      const trackId = `real-scene-track-${padNumber(scene.number)}`;
+      const explorationCard = scene.exploration
+        ? renderVideoCard(scene, scene.exploration, 'exploration')
+        : renderExplorationPlaceholder(scene.number);
+      const episodeCards = scene.episodes
+        .map((episode) => renderVideoCard(scene, episode, 'episode'))
+        .join('');
+
+      return `
+        <details class="real-video-scene">
+          <summary class="real-video-scene-head" aria-labelledby="real-scene-title-${padNumber(scene.number)}">
+            <div class="real-video-scene-title">
+              <h4 id="real-scene-title-${padNumber(scene.number)}">Scene ${padNumber(scene.number)}</h4>
+            </div>
+            <span class="real-video-scene-toggle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </summary>
+          <div class="real-video-carousel-bar">
+            <div class="real-video-scene-actions" aria-label="Scroll Scene ${padNumber(scene.number)} videos">
+              <button class="scene-scroll-button" type="button" data-scene-scroll="-1" data-track="${trackId}" aria-label="Scroll Scene ${padNumber(scene.number)} videos left">←</button>
+              <button class="scene-scroll-button" type="button" data-scene-scroll="1" data-track="${trackId}" aria-label="Scroll Scene ${padNumber(scene.number)} videos right">→</button>
+            </div>
+          </div>
+          <div class="scene-video-track" id="${trackId}">
+            ${explorationCard}
+            ${episodeCards}
+          </div>
+        </details>
+      `;
+    }).join('');
+
+    const realVideoSceneDetails = [...realVideoScenes.querySelectorAll('.real-video-scene')];
+    realVideoSceneDetails.forEach((scene) => {
+      scene.addEventListener('toggle', () => {
+        if (!scene.open) return;
+        realVideoSceneDetails.forEach((otherScene) => {
+          if (otherScene !== scene) otherScene.removeAttribute('open');
+        });
+      });
+    });
+
+    realVideoScenes.addEventListener('click', (event) => {
+      const scrollButton = event.target.closest('[data-scene-scroll]');
+      if (scrollButton) {
+        const track = document.getElementById(scrollButton.dataset.track);
+        const direction = Number(scrollButton.dataset.sceneScroll);
+        track.scrollBy({ left: direction * Math.min(track.clientWidth * 0.82, 720), behavior: 'smooth' });
+        return;
+      }
+
+      const button = event.target.closest('[data-video-id]');
+      if (!button) return;
+
+      const video = videoRegistry.get(button.dataset.videoId);
+      robotVideo.poster = video.poster;
+      robotVideo.src = video.src;
+      videoDialog.showModal();
+      robotVideo.play().catch(() => {});
+    });
+
+    const resetRobotVideo = () => {
+      robotVideo.pause();
+      robotVideo.removeAttribute('src');
+      robotVideo.load();
+    };
+
+    document.getElementById('video-dialog-close').addEventListener('click', () => videoDialog.close());
+    videoDialog.addEventListener('click', (event) => {
+      if (event.target === videoDialog) videoDialog.close();
+    });
+    videoDialog.addEventListener('close', resetRobotVideo);
 
     const updateHeader = () => header.classList.toggle('scrolled', window.scrollY > 16);
     updateHeader();

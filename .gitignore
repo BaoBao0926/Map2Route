@@ -5,3 +5,6 @@ scripts/methods/lang2ltlv2/Lang2LTL-2/
 __pycache__/
 *.py[cod]
 scripts/methods/api_key.py
+
+# Local source and release-ready real-world experiment videos.
+/git_resources/real_world/
